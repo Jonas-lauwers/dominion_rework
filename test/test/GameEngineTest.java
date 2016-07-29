@@ -157,7 +157,7 @@ public class GameEngineTest {
 		ge.setPlayableKingdomCards(new int[] {0,1,2,3,4,5,6,7,8,9});
 		ge.startGame();
 		ge.discardFromHand(ge.getCurrentPlayer(),1);
-		assertEquals(4, ge.getCurrentPlayer().getDeck("Hand").size());
+		assertEquals(4, ge.getCurrentPlayer().getDeck("hand").size());
 	}
 	
 	@Test
@@ -172,7 +172,7 @@ public class GameEngineTest {
 		ge.discardFromHand(ge.getCurrentPlayer(),1);
 		ge.discardFromHand(ge.getCurrentPlayer(),1);
 		ge.discardFromHand(ge.getCurrentPlayer(),1);
-		assertEquals(2, ge.getCurrentPlayer().getDeck("Hand").size());
+		assertEquals(2, ge.getCurrentPlayer().getDeck("hand").size());
 	}
 	
 	@Test
@@ -187,7 +187,7 @@ public class GameEngineTest {
 		ge.discardFromHand(ge.getCurrentPlayer(),1);
 		ge.discardFromHand(ge.getCurrentPlayer(),3);
 		ge.discardFromHand(ge.getCurrentPlayer(),2);
-		assertEquals(2, ge.getCurrentPlayer().getDeck("Hand").size());
+		assertEquals(2, ge.getCurrentPlayer().getDeck("hand").size());
 	}
 	
 	@Test
@@ -200,7 +200,7 @@ public class GameEngineTest {
 		ge.setPlayableKingdomCards(new int[] {0,1,2,3,4,5,6,7,8,9});
 		ge.startGame();
 		ge.trashFromHand(ge.getCurrentPlayer(),1);
-		assertEquals(1, ge.getCurrentPlayer().getDeck("Trash").size());
+		assertEquals(1, ge.getCurrentPlayer().getDeck("trash").size());
 	}
 	
 	@Test
@@ -215,7 +215,7 @@ public class GameEngineTest {
 		ge.trashFromHand(ge.getCurrentPlayer(),1);
 		ge.trashFromHand(ge.getCurrentPlayer(),1);
 		ge.trashFromHand(ge.getCurrentPlayer(),1);
-		assertEquals(3, ge.getCurrentPlayer().getDeck("Trash").size());
+		assertEquals(3, ge.getCurrentPlayer().getDeck("trash").size());
 	}
 	
 	@Test
@@ -227,8 +227,8 @@ public class GameEngineTest {
 		ge.getChoosableKingdomCards();
 		ge.setPlayableKingdomCards(new int[] {0,1,2,3,4,5,6,7,8,18});
 		ge.startGame();
-		ge.getCardOfValue("Kingdom", 9, 5);
-		assertEquals(1, ge.getCurrentPlayer().getDeck("Discard").size());
+		ge.getCardOfValue("kingdom", 9, 5);
+		assertEquals(1, ge.getCurrentPlayer().getDeck("discard").size());
 	}
 	
 	@Test
@@ -240,8 +240,8 @@ public class GameEngineTest {
 		ge.getChoosableKingdomCards();
 		ge.setPlayableKingdomCards(new int[] {0,1,2,3,4,5,6,7,8,18});
 		ge.startGame();
-		ge.getCardOfValue("Kingdom", 9, 4);
-		assertEquals(0, ge.getCurrentPlayer().getDeck("Discard").size());
+		ge.getCardOfValue("kingdom", 9, 4);
+		assertEquals(0, ge.getCurrentPlayer().getDeck("discard").size());
 	}
 	
 	@Test
@@ -253,11 +253,11 @@ public class GameEngineTest {
 		ge.getChoosableKingdomCards();
 		ge.setPlayableKingdomCards(new int[] {0,1,2,3,4,5,6,7,8,18});
 		ge.startGame();
-		ge.getCurrentPlayer().getDeck("Hand").add(new Card("Copper"));
+		ge.getCurrentPlayer().getDeck("hand").add(new Card("Copper"));
 		Card trashcard = ge.getSelectedCard(5);
-		ge.playCard(5);
+		ge.playCard(trashcard);
 		ge.trashPlayedCard();
-		assertEquals(trashcard, ge.getCurrentPlayer().getDeck("Trash").getCard(0));
+		assertEquals(trashcard, ge.getCurrentPlayer().getDeck("trash").getCard(0));
 	}
 	
 	/**
