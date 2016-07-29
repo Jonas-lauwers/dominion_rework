@@ -21,11 +21,11 @@ public class Player implements Serializable{
 		this.coins = 0;
 		this.score = 0;
 		this.PlayingField = new HashMap<>();
-		this.PlayingField.put("Trash", new Deck());
-		this.PlayingField.put("Discard", new Deck());
-		this.PlayingField.put("Table", new Deck());
-		this.PlayingField.put("Deck", new Deck());
-		this.PlayingField.put("Hand", new Deck());
+		this.PlayingField.put("trash", new Deck());
+		this.PlayingField.put("discard", new Deck());
+		this.PlayingField.put("table", new Deck());
+		this.PlayingField.put("deck", new Deck());
+		this.PlayingField.put("hand", new Deck());
 	}
 	
 	
@@ -33,15 +33,16 @@ public class Player implements Serializable{
 		return this.PlayingField.get(deckName);
 	}
 	
+        //TODO do we need to have this?
 	public Map<String , Deck> getAllDecks(){
-			return this.PlayingField;
+		return this.PlayingField;
 	}
 	
 	public int getCoins(){
 		return this.coins;
 	}
 	
-	public void setCoins(int coins){
+	public void addCoins(int coins){
 		this.coins += coins;
 	}
 	
@@ -49,7 +50,7 @@ public class Player implements Serializable{
 		return this.actions;
 	}
 	
-	public void setActions(int actions) {
+	public void addActions(int actions) {
 		this.actions += actions;
 	}
 	
@@ -57,7 +58,7 @@ public class Player implements Serializable{
 		return this.buys;
 	}
 	
-	public void setBuys(int buys) {
+	public void addBuys(int buys) {
 		this.buys += buys;
 	}
 	
@@ -66,8 +67,8 @@ public class Player implements Serializable{
 	}
 	
 	public void endPlayerTurn() {
-		this.PlayingField.get("Hand").moveDeckTo(this.PlayingField.get("Discard"));
-		this.PlayingField.get("Table").moveDeckTo(this.PlayingField.get("Discard"));
+		this.PlayingField.get("hand").moveDeckTo(this.PlayingField.get("discard"));
+		this.PlayingField.get("table").moveDeckTo(this.PlayingField.get("discard"));
 		this.buys = 1;
 		this.actions = 1;
 		this.coins = 0;
