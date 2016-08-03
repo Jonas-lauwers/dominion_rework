@@ -17,7 +17,7 @@ public class GameEngine implements Serializable {
     private String[] expansions;
     private Deck choosableKingdomCards;
     private Map<String, Card> usedCards;
-    private Map<String, Deck[]> gameTable;
+    private Map<String, Stack> gameTable;
     private String phase;
 
     public GameEngine() {
@@ -95,15 +95,12 @@ public class GameEngine implements Serializable {
 
     // takes an array of ints containing the index of the chosen kingdomcards and adds them to the game.
     public void setPlayableKingdomCards(int[] chosenCardsIndex) {
-        Deck[] kingdomDecks = new Deck[chosenCardsIndex.length];
-        int i = 0;
+        Stack kingdomStack = new Stack();
         for (int index : chosenCardsIndex) {
             Card card = this.choosableKingdomCards.getCard(index);
             usedCards.put(card.getName(), card);
-            kingdomDecks[i] = new Deck(card, 10);
-            i++;
+            kingdomStack.put(card, 10);
         }
-        Arrays.sort(kingdomDecks);
         gameTable.put("kingdom", kingdomDecks);
     }
 
@@ -112,16 +109,12 @@ public class GameEngine implements Serializable {
         if (cardNames.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        Deck[] kingdomDecks = new Deck[cardNames.size()];
-        int i = 0;
+        Stack kingdomStack = new Stack();
         for (String cardName : cardNames) {
             Card card = new Card(cardName);
             usedCards.put(card.getName(), card);
-            kingdomDecks[i] = new Deck(card, 10);
-            i++;
+            kingdomStack.put(card, 10);
         }
-        Arrays.sort(kingdomDecks);
-        gameTable.put("kingdom", kingdomDecks);
     }
 
     // should only be run after the above functions have been executed and will set up the rest of the game and start.
@@ -188,13 +181,21 @@ public class GameEngine implements Serializable {
     }
 
     //INFO here starts gameplay:
+    //TODO look for a way to edit the currentplayer variable to a player instead of a int (maybe iterator over the list?)
     
+    //Card Actions:
+    
+    
+    /**
+     * Play a given card and execute all the actions of the card.
+     * @param card The card to play.
+     * @return True if card is played.
+     */
     //TODO clean up function there is repetition.
     //TODO update to make it shift the actual playing to a function specific to the type of card( treasure, kingdom, victory)
     //TODO add functionality to 
     public boolean playCard(Card card) {
         Player player = getCurrentPlayer();
-        //Card card = player.getDeck("hand").getCard(cardNumber);
         if (card.getPlayableTurn() != "never" && (!this.phase.equals("Buy"))) {
             if (player.getActions() != 0 && card.isAction()) {
                 player.addActions(card.getActions() - 1);
@@ -202,15 +203,47 @@ public class GameEngine implements Serializable {
                 player.addCoins(card.getCoins());
                 drawCardsFromPlayerDeck(player, card.getDraws());
                 player.getDeck("hand").moveCardToDeck(card, player.getDeck("table"));
+                //TODO should not be here so remove after making the above todo's
+                checkPhaseChange();
                 return true;
             }
             if (card.isTreasure()) {
                 player.addCoins(card.getCoins());
                 player.getDeck("hand").moveCardToDeck(card, player.getDeck("table"));
+                //TODO should not be here so remove after making the above todo's
+                checkPhaseChange();
                 return true;
             }
         }
         return false;
+    }
+    
+    /**
+     * Buy a card from a deck on the gametable
+     * @param deck The deck where the card belongs to
+     * @param card The card to buy
+     */
+    public void buyCard(Card card, String deck) {
+        Player player = getCurrentPlayer();
+        Deck deck = gameTable.get(deck)[cardNumber];
+        Card card = deck.getCard(0);
+        if (player.getBuys() != 0) {
+            if (card.getCost() <= player.getCoins()) {
+                drawCardFromTable(deck, card, getCurrentPlayer());
+                player.addCoins(-card.getCost());
+                player.addBuys(-1);
+                this.phase = "Buy";
+            }
+        }
+    }
+    
+    //Engine actions:
+    
+    private void checkPhaseChange() {
+        Player player = getCurrentPlayer();
+        if (player.getActions() == 0 || !player.getDeck("hand").hasPlayableCards()) {
+            this.phase = "Buy";
+        }
     }
 
     //Original functions before refactoring:
@@ -327,32 +360,32 @@ public class GameEngine implements Serializable {
 //	public boolean playCard(int cardNumber) {
 //		return playCard(cardNumber, false);
 //	}
-    public void buyCard(String deckList, int cardNumber, boolean isAction) {
-        Player player = getCurrentPlayer();
-        Deck deck = gameTable.get(deckList)[cardNumber];
-        Card card = deck.getCard(0);
-        if (player.getBuys() != 0) {
-            if (card.getCost() <= player.getCoins()) {
-                drawCardFromTable(deck, card, getCurrentPlayer());
-                player.addCoins(-card.getCost());
-                player.addBuys(-1);
-                if (!isAction) {
-                    this.phase = "Buy";
-                }
-            }
-        }
-    }
-
-    public void buyCard(String deckList, int cardNumber) {
-        buyCard(deckList, cardNumber, false);
-    }
-
-    public void checkPhaseChange() {
-        Player player = getCurrentPlayer();
-        if ((player.getActions() == 0 || !player.getDeck("hand").hasKingdomCards()) && !player.getDeck("hand").hasCardOfType("Treasure")) {
-            this.phase = "Buy";
-        }
-    }
+//    public void buyCard(String deckList, int cardNumber, boolean isAction) {
+//        Player player = getCurrentPlayer();
+//        Deck deck = gameTable.get(deckList)[cardNumber];
+//        Card card = deck.getCard(0);
+//        if (player.getBuys() != 0) {
+//            if (card.getCost() <= player.getCoins()) {
+//                drawCardFromTable(deck, card, getCurrentPlayer());
+//                player.addCoins(-card.getCost());
+//                player.addBuys(-1);
+//                if (!isAction) {
+//                    this.phase = "Buy";
+//                }
+//            }
+//        }
+//    }
+//
+//    public void buyCard(String deckList, int cardNumber) {
+//        buyCard(deckList, cardNumber, false);
+//    }
+//
+//    public void checkPhaseChange() {
+//        Player player = getCurrentPlayer();
+//        if ((player.getActions() == 0 || !player.getDeck("hand").hasKingdomCards()) && !player.getDeck("hand").hasCardOfType("Treasure")) {
+//            this.phase = "Buy";
+//        }
+//    }
 
     public void endTurn() {
         if (checkGameEnd()) {
