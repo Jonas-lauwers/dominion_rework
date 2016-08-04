@@ -8,6 +8,7 @@ package Engine;
 import java.util.*;
 import Card.Card;
 import java.io.Serializable;
+import java.util.Map.Entry;
 /**
  *
  * @author Jonas
@@ -17,13 +18,14 @@ public class Stack implements Serializable, Iterable<Card> {
     
     static final long serialVersionUID = 1337;
     private Map<Card, Integer> stack;
+    private List<Entry<Card,Integer>> sorted;
     
     /**
      * Creates an empty card stack.
      */
     public Stack() {
         //stack = new HashMap<>();
-        stack = new TreeMap<>();
+        stack = new HashMap<>();
     }
     
     /**
@@ -100,10 +102,14 @@ public class Stack implements Serializable, Iterable<Card> {
      */
     @Override
     public String toString() {
+        if(sorted == null) {
+            sorted = new LinkedList(stack.entrySet());
+        }
         String stackString = "";
         int counter = 1;
-        for(Map.Entry<Card, Integer> entry: stack.entrySet()) {
-            stackString += String.format("\t%2d) %s - %2d\n", counter, entry.getKey(), entry.getValue());
+        for(Entry<Card, Integer> entry: sorted ) {
+            stackString += String.format("\t%02d) (%02d) %s", counter, entry.getValue(), entry.getKey());
+            counter++;
         }
         return stackString;
     }

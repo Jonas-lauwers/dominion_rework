@@ -53,7 +53,7 @@ public class Deck implements Serializable, Iterable<Card> {
      * @param card The card to remove
      * @return True if card was in deck.
      */
-    //TODO check if this version of this is still needed.
+    //TODO: check if this version of this is still needed.
     public boolean remove(Card card) {
         return deck.remove(card);
     }
@@ -63,7 +63,7 @@ public class Deck implements Serializable, Iterable<Card> {
      * @param cardNumber The index of the card.
      * @return True if index existed
      */
-    //TODO check if this version of this is still needed.
+    //TODO: check if this version of this is still needed.
     public boolean remove(int cardNumber) {
         try {
             deck.remove(cardNumber);
@@ -112,7 +112,7 @@ public class Deck implements Serializable, Iterable<Card> {
      * @param deck The deck where to move the card to.
      * @return True i card exists in deck.
      */
-    //TODO Check if this version is needed.
+    //TODO: Check if this version is needed.
     public boolean moveCardToDeck(Card card, Deck deck) {
         if(this.deck.contains(card)) {
             this.remove(card);
@@ -128,7 +128,7 @@ public class Deck implements Serializable, Iterable<Card> {
      * @param deck The deck where to move the card to.
      * @return True if card exists in deck.
      */
-    //TODO Check if this version is needed.
+    //TODO: Check if this version is needed.
     public boolean moveCardToDeck(int cardNumber, Deck deck) {
         if(cardNumber < this.deck.size()) {
             deck.add(this.getCard(cardNumber));
@@ -154,7 +154,7 @@ public class Deck implements Serializable, Iterable<Card> {
 //        return false;
 //    }
 
-    //TODO make above function functional and clean up below!!!
+    //TODO: make above function functional and clean up below!!!
     /**
      * Check if the deck contains any kingdom cards.
      * @return Returns true if it contains kingdom cards.
@@ -212,7 +212,7 @@ public class Deck implements Serializable, Iterable<Card> {
      * Counts all the victory points  that are in the given deck. Takes in acount the Garden card.
      * @return The total amount of points in the deck.
      */
-    //TODO clean up and delegate some stuff to cards!
+    //TODO: clean up and delegate some stuff to cards!
     public int countVictoryPoints() {
         int victoryPoints = 0;
         int gardenCard = 0;
@@ -247,7 +247,7 @@ public class Deck implements Serializable, Iterable<Card> {
         return deck.size();
     }
 
-    //TODO mae the cards comparable so we can sort them in the limited card decks( for kingdomCards deck for example)
+    //TODO: mae the cards comparable so we can sort them in the limited card decks( for kingdomCards deck for example)
 //    @Override
 //    public int compareTo(Object o) {
 //        if (o instanceof Deck) {
@@ -283,7 +283,7 @@ public class Deck implements Serializable, Iterable<Card> {
         }
     }
 
-    //TODO verify if we will need this after refactoring GameEngine
+    //TODO: verify if we will need this after refactoring GameEngine
     public String[] toStringArray() {
         if (deck.isEmpty()) {
             return new String[]{};

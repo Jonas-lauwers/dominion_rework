@@ -187,8 +187,8 @@ public class GameEngine implements Serializable {
         this.phase = "action";
     }
 
-    //INFO here starts gameplay:
-    //TODO look for a way to edit the currentplayer variable to a player instead of a int (maybe iterator over the list?)
+    //INFO: here starts gameplay:
+    //TODO:: look for a way to edit the currentplayer variable to a player instead of a int (maybe iterator over the list?)
     
     //Player Actions:
     
@@ -198,7 +198,7 @@ public class GameEngine implements Serializable {
      * @param card The card to play.
      * @return True if card is played.
      */
-    //TODO add functionality for reaction
+    //TODO:: add functionality for reaction
     public boolean playCard(Card card) {
         Player player = getCurrentPlayer();
         if (card.isPlayable()) {
@@ -301,7 +301,7 @@ public class GameEngine implements Serializable {
     private boolean drawCardFromTable(Stack stack, Card card, Player player) {
         return drawCardFromTable(stack, card, player, "discard");
     }
-    //TODO remove this it's only temporary
+    //TODO: remove this it's only temporary
     public boolean drawCardFromTable(String stack, Card card, Player player, String toDeck) {
         return drawCardFromTable(getStack(stack), card, player, toDeck);
     }
@@ -321,7 +321,7 @@ public class GameEngine implements Serializable {
     /**
      * End turn.
      */
-    //TODO recheck this for rework or clean up.
+    //TODO: recheck this for rework or clean up.
     public void endTurn() {
         if (checkGameEnd()) {
             endGame();
@@ -378,7 +378,7 @@ public class GameEngine implements Serializable {
        
        
        
-    //TODO update these to be compliant to reworked functions.
+    //TODO: update these to be compliant to reworked functions.
     //Original functions before refactoring:
     public Stack getStack(String stack) {
         return gameTable.get(stack.toLowerCase());
@@ -481,7 +481,7 @@ public class GameEngine implements Serializable {
         return playerStatus;
     }
     
-    //TODO update stack to be printable, now will print memory location.
+    //TODO: update stack to be printable, now will print memory location.
     public String getTableStatus() {
         String tableStatus = String.format("Overview of table:\n");
         tableStatus += String.format("Treasure Cards:\n%s", getStack("treasure"));
