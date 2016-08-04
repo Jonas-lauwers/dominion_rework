@@ -4,6 +4,7 @@ import Engine.GameEngine;
 import Database_connection.cardConnection;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Card implements Serializable, Comparable<Object> {
 
@@ -145,5 +146,12 @@ public class Card implements Serializable, Comparable<Object> {
             }
          }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + Objects.hashCode(this.name);
+        return hash;
     }
 }
