@@ -10,13 +10,7 @@ public class DeckTest {
 	Card gold = new Card("Gold");
 	Card duchy = new Card("Duchy");
 	Card laboratory = new Card("Laboratory");
-	Deck prefilledDeck = new Deck(gold,30);
 	Deck newDeck = new Deck();
-
-	@Test
-	public void testPrefilledDeck() {
-		assertEquals("(30) Gold       Cost: 6\n", prefilledDeck.toString());
-	}
 	
 	@Test
 	public void addOneCardToDeck() {

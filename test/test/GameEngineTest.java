@@ -227,7 +227,12 @@ public class GameEngineTest {
 		ge.getChoosableKingdomCards();
 		ge.setPlayableKingdomCards(new int[] {0,1,2,3,4,5,6,7,8,18});
 		ge.startGame();
-		ge.getCardOfValue("kingdom", 9, 5);
+                for(Card c:ge.getStack("kingdom").getCards()) {
+                    if(c.getCost() == 5) {
+                        ge.getCardOfValue("kingdom", c, 5);
+                        break;
+                    }
+                }
 		assertEquals(1, ge.getCurrentPlayer().getDeck("discard").size());
 	}
 	
@@ -240,7 +245,12 @@ public class GameEngineTest {
 		ge.getChoosableKingdomCards();
 		ge.setPlayableKingdomCards(new int[] {0,1,2,3,4,5,6,7,8,18});
 		ge.startGame();
-		ge.getCardOfValue("kingdom", 9, 4);
+		for(Card c:ge.getStack("kingdom").getCards()) {
+                    if(c.getCost() == 5) {
+                        ge.getCardOfValue("kingdom", c, 4);
+                        break;
+                    }
+                }
 		assertEquals(0, ge.getCurrentPlayer().getDeck("discard").size());
 	}
 	
