@@ -79,10 +79,13 @@ public class StackTest {
         assertEquals(1, stack.getCards().length);
     }
     
+    //INFO keep in mind that when adding to the stack they get added in front.
     @Test
     public void toStringText() {
         stack.add(cards[0],0);
-        assertEquals("\t01) (00) "+cards[0], stack.toString());
+        stack.add(cards[1],0);
+        stack.add(cards[3],0);
+        assertEquals("\t01) (00) "+cards[1]+"\t02) (00) "+cards[0]+"\t03) (00) "+cards[3], stack.toString());
     }
     
 }
