@@ -202,14 +202,19 @@ public class GameEngine implements Serializable {
     public boolean playCard(Card card) {
         Player player = getCurrentPlayer();
         if (card.isPlayable()) {
+            boolean played = false;
             if((player.getActions() > 0) && card.isAction()) {
                 playAction(card);
+                played = true;
             }
             if(card.isTreasure()) {
                 playTreasure(card);
+                played = true;
             }
-            checkPhaseChange();
-            return moveCardFromHandToDiscard(card);
+            if(played) {
+                checkPhaseChange();
+                return moveCardFromHandToDiscard(card);
+            }
         }
         return false;
     }
@@ -245,6 +250,7 @@ public class GameEngine implements Serializable {
         player.addActions(card.getActions() - 1);
         player.addBuys(card.getBuys());
         player.addCoins(card.getCoins());
+        drawCardsFromPlayerDeck(player, card.getDraws());
     }
     
     /**
@@ -446,6 +452,13 @@ public class GameEngine implements Serializable {
             return true;
         } else {
             return false;
+        }
+    }
+    
+    public void getCardOfValue(String stackName, Card card, int maxValue, String toDeck) {
+        Stack stack = getStack(stackName);
+        if (card.getCost() <= maxValue) {
+            drawCardFromTable(stack, card, getCurrentPlayer(), toDeck);
         }
     }
 
