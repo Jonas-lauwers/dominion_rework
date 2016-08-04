@@ -4,8 +4,6 @@ import java.util.*;
 import Card.Card;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 //Comparable<Object>
 
 
@@ -176,7 +174,7 @@ public class Deck implements Serializable, Iterable<Card> {
      */
     public boolean hasPlayableCards() {
         for(Card c: deck) {
-            if(!c.getPlayableTurn().equals("never")) {
+            if(c.isPlayable()) {
                 return true;
             }
         }
@@ -220,7 +218,7 @@ public class Deck implements Serializable, Iterable<Card> {
         int gardenCard = 0;
         if (!deck.isEmpty()) {
             for (Card c : deck) {
-                if (c.getName().equals("Gardens")) {
+                if (c.getName().equals("gardens")) {
                     gardenCard++;
                 } else if (c.getType().equals("Victory")) {
                     victoryPoints += c.getVictoryPoints();

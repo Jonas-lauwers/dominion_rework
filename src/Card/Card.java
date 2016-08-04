@@ -5,7 +5,7 @@ import Database_connection.cardConnection;
 
 import java.io.Serializable;
 
-public class Card implements Serializable {
+public class Card implements Serializable, Comparable<Object> {
 
     static final long serialVersionUID = 1337;
     private String name;
@@ -19,7 +19,7 @@ public class Card implements Serializable {
 
     public Card(String name) {
         dbOutput = new cardConnection().getCard(name);
-        this.name = name;
+        this.name = name.toLowerCase();
         this.cost = Integer.parseInt(dbOutput[1]);
         this.description = dbOutput[7];
         this.type = dbOutput[0];
@@ -80,8 +80,9 @@ public class Card implements Serializable {
         return cardState.getActions();
     }
 
-    public String getPlayableTurn() {
-        return cardState.getPlayableTurn();
+    //TODO change the cardstate function to a more logic result
+    public boolean isPlayable() {
+        return !(cardState.getPlayableTurn().equals("never"));
     }
 
     public int getDraws() {
@@ -114,5 +115,35 @@ public class Card implements Serializable {
             return String.format("%-20s Cost: %1d - Actions: %1d - Buys: %1d - Coins: %1d - Cards: %1d - Description: %s\n", this.getName(), this.getCost(), this.getActions(), this.getBuys(), this.getCoins(), this.getDraws(), this.getDescription());
         }
         return String.format("%-20s Cost: %1d - Actions: %1d - Buys: %1d - Coins: %1d - Cards: %1d\n", this.getName(), this.getCost(), this.getActions(), this.getBuys(), this.getCoins(), this.getDraws());
+    }
+    
+    @Override
+    public int compareTo(Object o) {
+        if (o instanceof Card) {
+            Card c = ((Card) o);
+            if (this.getCost() > c.getCost()) {
+                return 1;
+            }
+            else if (this.getCost() < c.getCost()) {
+                return -1;
+            }
+            else {
+                return 0;
+            }
+        }
+        else {
+            throw new IllegalArgumentException();
+        }
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof Card) {
+            Card c = ((Card) o);
+            if(c.getName().equals(this.getName())) {
+                return true;
+            }
+         }
+        return false;
     }
 }

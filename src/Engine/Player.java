@@ -30,7 +30,7 @@ public class Player implements Serializable{
 	
 	
 	public Deck getDeck(String deckName){
-		return this.PlayingField.get(deckName);
+		return this.PlayingField.get(deckName.toLowerCase());
 	}
 	
         //TODO do we need to have this?

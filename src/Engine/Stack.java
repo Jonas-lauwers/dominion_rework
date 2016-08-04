@@ -7,11 +7,13 @@ package Engine;
 
 import java.util.*;
 import Card.Card;
+import java.io.Serializable;
 /**
  *
  * @author Jonas
  */
-public class Stack {
+//TODO implement ToString!
+public class Stack implements Serializable, Iterable<Card> {
     
     static final long serialVersionUID = 1337;
     private Map<Card, Integer> stack;
@@ -20,7 +22,8 @@ public class Stack {
      * Creates an empty card stack.
      */
     public Stack() {
-        stack = new HashMap<>();
+        //stack = new HashMap<>();
+        stack = new TreeMap<>();
     }
     
     /**
@@ -33,6 +36,16 @@ public class Stack {
             numberOfCards += stack.get(card);
         }
         stack.put(card, numberOfCards);
+    }
+    
+    /**
+     * Returns an array with all the cards in the stack.
+     * @return Array with all cards in stack.
+     */
+    public Card[] getCards() {
+        Card[] card = new Card[stack.size()];
+        card = stack.keySet().toArray(card);
+        return card;
     }
     
     /**
@@ -70,6 +83,11 @@ public class Stack {
             return true;
         }
         return false;
+    }
+    
+    @Override
+    public Iterator<Card> iterator() {
+        return stack.keySet().iterator();
     }
 
     //TODO This is only here for testing purpose
