@@ -45,6 +45,7 @@ public class Stack implements Serializable, Iterable<Card> {
      */
     public Card[] getCards() {
         if(sorted == null) {
+            sorted = new Card[stack.keySet().size()];
             stack.keySet().toArray(sorted);
             Arrays.sort(sorted);
         }
