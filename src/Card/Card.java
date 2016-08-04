@@ -105,6 +105,13 @@ public class Card implements Serializable, Comparable<Object> {
         }
         return false;
     }
+    
+    public boolean isVictory() {
+        if (this.type.equals("Victory")) {
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public String toString() {
