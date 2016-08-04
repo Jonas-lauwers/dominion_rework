@@ -8,7 +8,6 @@ package Engine;
 import java.util.*;
 import Card.Card;
 import java.io.Serializable;
-import java.util.Map.Entry;
 /**
  *
  * @author Jonas
@@ -18,7 +17,7 @@ public class Stack implements Serializable, Iterable<Card> {
     
     static final long serialVersionUID = 1337;
     private Map<Card, Integer> stack;
-    private List<Entry<Card,Integer>> sorted;
+    private Card[] sorted;
     
     /**
      * Creates an empty card stack.
@@ -29,7 +28,7 @@ public class Stack implements Serializable, Iterable<Card> {
     }
     
     /**
-     * Adds a card to the stack.
+     * Adds a card to the stack. Adds always in front so if 2 cards have equal cost the last one added will be first.
      * @param card The card to add.
      * @param numberOfCards The value indicating how many cards are added in the stack.
      */
@@ -45,9 +44,11 @@ public class Stack implements Serializable, Iterable<Card> {
      * @return Array with all cards in stack.
      */
     public Card[] getCards() {
-        Card[] card = new Card[stack.size()];
-        card = stack.keySet().toArray(card);
-        return card;
+        if(sorted == null) {
+            stack.keySet().toArray(sorted);
+            Arrays.sort(sorted);
+        }
+        return sorted;
     }
     
     /**
@@ -103,12 +104,12 @@ public class Stack implements Serializable, Iterable<Card> {
     @Override
     public String toString() {
         if(sorted == null) {
-            sorted = new LinkedList(stack.entrySet());
+            getCards();
         }
         String stackString = "";
         int counter = 1;
-        for(Entry<Card, Integer> entry: sorted ) {
-            stackString += String.format("\t%02d) (%02d) %s", counter, entry.getValue(), entry.getKey());
+        for(Card c: sorted) {
+            stackString += String.format("\t%02d) (%02d) %s", counter, this.getNumberOfCards(c), c.toString());
             counter++;
         }
         return stackString;
