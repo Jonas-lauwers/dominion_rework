@@ -12,7 +12,7 @@ import java.io.Serializable;
  *
  * @author Jonas
  */
-//TODO implement ToString!
+//TODO: implement ToString!
 public class Stack implements Serializable, Iterable<Card> {
     
     static final long serialVersionUID = 1337;
@@ -85,12 +85,30 @@ public class Stack implements Serializable, Iterable<Card> {
         return false;
     }
     
+    /**
+     * Iterator to iterate over the stack.
+     * @return Stack iterator.
+     */
     @Override
     public Iterator<Card> iterator() {
         return stack.keySet().iterator();
     }
+    
+    /**
+     * Returns a representable version of the stack in a string.
+     * @return Representable string of stack.
+     */
+    @Override
+    public String toString() {
+        String stackString = "";
+        int counter = 1;
+        for(Map.Entry<Card, Integer> entry: stack.entrySet()) {
+            stackString += String.format("\t%2d) %s - %2d\n", counter, entry.getKey(), entry.getValue());
+        }
+        return stackString;
+    }
 
-    //TODO This is only here for testing purpose
+    //TODO: This is only here for testing purpose
     public void setCount(Card card, int count) {
         if(stack.containsKey(card)) {    
             stack.put(card, count);
