@@ -1,6 +1,5 @@
 package Card;
 
-import Engine.GameEngine;
 import Database_connection.cardConnection;
 
 import java.io.Serializable;
@@ -10,11 +9,10 @@ public class Card implements Serializable, Comparable<Object> {
 
     static final long serialVersionUID = 1337;
     private String name;
-    String[] dbOutput;
     private String description;
-    private int cost;
     private String type;
-    protected GameEngine ge;
+    private int cost;
+    String[] dbOutput;
 
     CardState cardState;
 
@@ -22,7 +20,7 @@ public class Card implements Serializable, Comparable<Object> {
         dbOutput = new cardConnection().getCard(name);
         this.name = name.toLowerCase();
         this.cost = Integer.parseInt(dbOutput[1]);
-        this.description = dbOutput[7];
+        this.description = ( dbOutput[7] == null ? "" : dbOutput[7]);
         this.type = dbOutput[0];
         giveState();
         cardState.completeCard();
@@ -108,15 +106,13 @@ public class Card implements Serializable, Comparable<Object> {
         return false;
     }
 
+    @Override
     public String toString() {
         if (this.type.equals("Treasure") || this.type.equals("Victory") || this.name.equals("Curse")) {
             return String.format("%-10s Cost: %1d\n", this.getName(), this.getCost());
         }
-        if (this.description != null) {
-            return String.format("%-20s Cost: %1d - Actions: %1d - Buys: %1d - Coins: %1d - Cards: %1d - Description: %s\n", this.getName(), this.getCost(), this.getActions(), this.getBuys(), this.getCoins(), this.getDraws(), this.getDescription());
-        }
-        return String.format("%-20s Cost: %1d - Actions: %1d - Buys: %1d - Coins: %1d - Cards: %1d\n", this.getName(), this.getCost(), this.getActions(), this.getBuys(), this.getCoins(), this.getDraws());
-    }
+        return String.format("%-20s Cost: %1d - Actions: %1d - Buys: %1d - Coins: %1d - Cards: %1d - Description: %s\n", this.getName(), this.getCost(), this.getActions(), this.getBuys(), this.getCoins(), this.getDraws(), this.getDescription());
+}
     
     @Override
     public int compareTo(Object o) {
