@@ -8,6 +8,7 @@ import org.junit.Test;
 import Engine.GameEngine;
 import Engine.Player;
 import Card.Card;
+import Database_connection.SaveGameConnection;
 
 public class GameEngineTest {
 
@@ -269,5 +270,16 @@ public class GameEngineTest {
         ge.playCard(trashcard);
         ge.trashPlayedCard();
         assertEquals(trashcard, ge.getCurrentPlayer().getDeck("trash").getCard(0));
+    }
+    
+    @Test
+    public void loadGame() {
+        try {
+            ge = new SaveGameConnection().loadGame("test");
+            ge.getPlayerStatus(ge.getCurrentPlayer());
+        }
+        catch (Exception e) {
+            fail();
+        }
     }
 }

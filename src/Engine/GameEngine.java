@@ -25,7 +25,6 @@ public class GameEngine implements Serializable {
         this.choosableKingdomCards = new Deck();
         this.phase = "init";
         this.currentPlayer = 0;
-        this.expansions = new String[] { "dominion" };
     }
 
     public int getMaxNumberOfPlayers() {
@@ -231,6 +230,34 @@ public class GameEngine implements Serializable {
     }
 
     //Deck actions
+
+    /**
+     * Draw a number of cards from the player's deck to the player's hand.
+     * 
+     * @param player The player that wants to draw cards.
+     * @param number The number of cards he wants to draw.
+     */
+    public void drawCardsFromPlayerDeck(Player player, int number) {
+        for (int i = 0; i < number; i++) {
+            if (!player.getDeck("deck").isEmpty()) {
+                player.getDeck("hand").add(player.getDeck("deck").pop());
+            } else {
+                discardDeck(player);
+                i--;
+            }
+        }
+    }
+    
+    /**
+     * Put the discard deck and deck deck together into deck deck and shuffle.
+     * 
+     * @param player 
+     */
+    public void discardDeck(Player player) {
+        player.getDeck("discard").moveDeckTo(player.getDeck("deck"));
+        player.getDeck("deck").shuffle();
+    }
+    
     /**
      * Move card from hand to discard of the current player.
      *
@@ -281,6 +308,7 @@ public class GameEngine implements Serializable {
 
     /**
      * Return the current playing player.
+     * 
      * @return The current player.
      */
     public Player getCurrentPlayer() {
@@ -288,7 +316,18 @@ public class GameEngine implements Serializable {
     }
     
     /**
-     * If player has no actions or has no playable cards in hand then change
+     * Get the stack of the name stack.
+     * 
+     * @param stack The name of the stack.
+     * @return The stack of the name stack.
+     */
+    public Stack getStack(String stack) {
+        return gameTable.get(stack.toLowerCase());
+    }
+    
+    /**
+     * If player has no actions or has no playable cards in hand then change.
+     * 
      * phase to "Buy".
      */
     private void checkPhaseChange() {
@@ -370,36 +409,9 @@ public class GameEngine implements Serializable {
 
     //TODO: update these to be compliant to reworked functions.
     //Original functions before refactoring:
-    public Stack getStack(String stack) {
-        return gameTable.get(stack.toLowerCase());
-    }
 
     public String getPhase() {
         return this.phase;
-    }
-
-    public void setPhase(String whatPhase) {
-        this.phase = whatPhase.toLowerCase();
-    }
-
-    public Map<String, Stack> getGameTable() {
-        return this.gameTable;
-    }
-
-    public void drawCardsFromPlayerDeck(Player player, int number) {
-        for (int i = 0; i < number; i++) {
-            if (!player.getDeck("deck").isEmpty()) {
-                player.getDeck("hand").add(player.getDeck("deck").pop());
-            } else {
-                discardDeck(player);
-                i--;
-            }
-        }
-    }
-
-    public void discardDeck(Player player) {
-        player.getDeck("discard").moveDeckTo(player.getDeck("deck"));
-        player.getDeck("deck").shuffle();
     }
 
     public List<Player> getPlayers() {
@@ -413,14 +425,6 @@ public class GameEngine implements Serializable {
 
     public void trashFromHand(Player player, int cardNumber) {
         player.getDeck("hand").moveCardToDeck(cardNumber, player.getDeck("trash"));
-    }
-
-    public boolean checkSpecificCard(String specification, String expectedValue) {
-        if (specification.equals(expectedValue)) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     public void getCardOfValue(String stackName, Card card, int maxValue, String toDeck) {
@@ -440,15 +444,6 @@ public class GameEngine implements Serializable {
     public void trashPlayedCard() {
         Player player = getCurrentPlayer();
         player.getDeck("table").moveCardToDeck((player.getDeck("table").size()- 1), player.getDeck("trash"));
-    }
-
-    public Card getSelectedCard(int cardNumber) {
-        return getCurrentPlayer().getDeck("hand").getCard(cardNumber);
-    }
-
-    @SuppressWarnings("unused")
-    private boolean checkReactionCard(Player player) {
-        return player.getDeck("hand").hasReactionCards();
     }
 
     public String getPlayerStatus(Player p) {
@@ -480,26 +475,3 @@ public class GameEngine implements Serializable {
         }
     }
 }
-
-
-//    public Deck getChoosableKingdomCardsArray() {
-//        ArrayList<String> tmp = new cardConnection().getKingdomCards(this.expansions);
-//        for (String cardName : tmp) {
-//            this.choosableKingdomCards.add(new Card(cardName));
-//        }
-//        return this.choosableKingdomCards;
-//    }
-//
-//    public String[][] getChoosablePremadeSets() {
-//        ArrayList<String> tmp = new PremadeSetsConnection().getAllSetNames();
-//        String[][] choosableSets = new String[tmp.size()][11];
-//        for (int i = 0; i < tmp.size(); i++) {
-//            choosableSets[i][0] = tmp.get(i);
-//            ArrayList<String> cardNames = new PremadeSetsConnection().getKingdomSet(tmp.get(i));
-//            for (int j = 0; j < cardNames.size(); j++) {
-//                choosableSets[i][j + 1] = cardNames.get(j);
-//            }
-//
-//        }
-//        return choosableSets;
-//    }
