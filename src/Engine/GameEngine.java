@@ -185,6 +185,7 @@ public class GameEngine implements Serializable {
 
         currentPlayer = 0;
         this.phase = "action";
+        checkPhaseChange();
     }
 
     //INFO: here starts gameplay:
@@ -203,7 +204,7 @@ public class GameEngine implements Serializable {
         Player player = getCurrentPlayer();
         if (card.isPlayable()) {
             boolean played = false;
-            if((player.getActions() > 0) && card.isAction()) {
+            if((player.getActions() > 0) && card.isKingdom()) {
                 playAction(card);
                 played = true;
             }
@@ -212,8 +213,9 @@ public class GameEngine implements Serializable {
                 played = true;
             }
             if(played) {
+                moveCardFromHandToDiscard(card);
                 checkPhaseChange();
-                return moveCardFromHandToDiscard(card);
+                return true;
             }
         }
         return false;
@@ -489,8 +491,8 @@ public class GameEngine implements Serializable {
         playerStatus += String.format("Coins:  %2d\t", p.getCoins());
         playerStatus += String.format("Buys: %2d\t", p.getBuys());
         playerStatus += String.format("Actions: %2d\n", p.getActions());
-        playerStatus += String.format("Cards on table:\n %s", p.getDeck("table").toString());
-        playerStatus += String.format("Cards in hand:\n %s", p.getDeck("hand").toString());
+        playerStatus += String.format("Cards on table:\n%s", p.getDeck("table").toString());
+        playerStatus += String.format("Cards in hand:\n%s", p.getDeck("hand").toString());
         return playerStatus;
     }
     
