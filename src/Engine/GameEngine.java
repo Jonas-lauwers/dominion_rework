@@ -10,30 +10,31 @@ public class GameEngine implements Serializable {
 
     static final long serialVersionUID = 1337;
 
-    final int MIN_NUMBER_PLAYERS = 2;
-    final int MAX_NUMBER_PLAYERS = 4;
-    private List<Player> players;
+    final static int MIN_NUMBER_PLAYERS = 2;
+    final static int MAX_NUMBER_PLAYERS = 4;
+    private final List<Player> players;
+    private final Deck choosableKingdomCards;
+    private final Map<String, Stack> gameTable;
     private int currentPlayer;
     private String[] expansions;
-    private Deck choosableKingdomCards;
-    private Map<String, Card> usedCards;
-    private Map<String, Stack> gameTable;
     private String phase;
 
     public GameEngine() {
         this.players = new ArrayList<>();
-        this.usedCards = new HashMap<>();
         this.gameTable = new HashMap<>();
         this.choosableKingdomCards = new Deck();
+        this.phase = "init";
+        this.currentPlayer = 0;
+        this.expansions = new String[] { "dominion" };
     }
 
     public int getMaxNumberOfPlayers() {
-        return this.MAX_NUMBER_PLAYERS;
+        return GameEngine.MAX_NUMBER_PLAYERS;
     }
 
     // adds a player to the game if the playername is not already existing and if there aren't already enough players in the game.
     public void addPlayer(String playerName) {
-        if (this.getNumberOfPlayers() < this.MAX_NUMBER_PLAYERS) {
+        if (this.getNumberOfPlayers() < GameEngine.MAX_NUMBER_PLAYERS) {
             if (!players.contains(new Player(playerName))) {
                 players.add(new Player(playerName));
             } else {
@@ -67,41 +68,22 @@ public class GameEngine implements Serializable {
         return this.choosableKingdomCards.toString();
     }
 
-    public Deck getChoosableKingdomCardsArray() {
-        ArrayList<String> tmp = new cardConnection().getKingdomCards(this.expansions);
-        for (String cardName : tmp) {
-            this.choosableKingdomCards.add(new Card(cardName));
-        }
-        return this.choosableKingdomCards;
-    }
-
-    public String[][] getChoosablePremadeSets() {
-        ArrayList<String> tmp = new PremadeSetsConnection().getAllSetNames();
-        String[][] choosableSets = new String[tmp.size()][11];
-        for (int i = 0; i < tmp.size(); i++) {
-            choosableSets[i][0] = tmp.get(i);
-            ArrayList<String> cardNames = new PremadeSetsConnection().getKingdomSet(tmp.get(i));
-            for (int j = 0; j < cardNames.size(); j++) {
-                choosableSets[i][j + 1] = cardNames.get(j);
-            }
-
-        }
-        return choosableSets;
-    }
-
     public int getNumberOfChoosableKingdomCards() {
         return choosableKingdomCards.size();
     }
 
     // takes an array of ints containing the index of the chosen kingdomcards and adds them to the game.
-    public void setPlayableKingdomCards(int[] chosenCardsIndex) {
+    public boolean setPlayableKingdomCards(int[] chosenCardsIndex) {
         Stack kingdomStack = new Stack();
         for (int index : chosenCardsIndex) {
             Card card = this.choosableKingdomCards.getCard(index);
-            usedCards.put(card.getName(), card);
+            if(card == null) {
+                return false;
+            }
             kingdomStack.add(card, 10);
         }
         gameTable.put("kingdom", kingdomStack);
+        return true;
     }
 
     public void usePresetDeck(String deckName) {
@@ -112,7 +94,6 @@ public class GameEngine implements Serializable {
         Stack kingdomStack = new Stack();
         for (String cardName : cardNames) {
             Card card = new Card(cardName);
-            usedCards.put(card.getName(), card);
             kingdomStack.add(card, 10);
         }
         gameTable.put("kingdom", kingdomStack);
@@ -151,7 +132,6 @@ public class GameEngine implements Serializable {
         Stack moneyStack = new Stack();
         for (int i = 0; i < moneyTypes.length; i++) {
             Card card = new Card(moneyTypes[i]);
-            usedCards.put(card.getName(), card);
             moneyStack.add(card, 30);
         }
 
@@ -159,13 +139,11 @@ public class GameEngine implements Serializable {
         Stack victoryStack = new Stack();
         for (int i = 0; i < victoryTypes.length; i++) {
             Card card = new Card(victoryTypes[i]);
-            usedCards.put(card.getName(), card);
             victoryStack.add(card, victoryCardNumber);
         }
 
         Stack curseStack = new Stack();
-        usedCards.put("curse", new Card("curse"));
-        curseStack.add(usedCards.get("curse"), curseCardNumber);
+        curseStack.add(new Card("curse"), curseCardNumber);
 
         gameTable.put("victory", victoryStack);
         gameTable.put("treasure", moneyStack);
@@ -173,23 +151,23 @@ public class GameEngine implements Serializable {
 
         for (Player p : players) {
             Deck playerDeck = p.getDeck("deck");
+            Card card = gameTable.get("treasure").getCards()[0];
             for (int i = 0; i < 7; i++) {
-                playerDeck.add(usedCards.get("copper"));
+                playerDeck.add(card);
             }
+            card = gameTable.get("victory").getCards()[0];
             for (int i = 0; i < 3; i++) {
-                playerDeck.add(usedCards.get("estate"));
+                playerDeck.add(card);
             }
             playerDeck.shuffle();
             drawCardsFromPlayerDeck(p, 5);
         }
-
-        currentPlayer = 0;
+        
         this.phase = "action";
         checkPhaseChange();
     }
 
     //INFO: here starts gameplay:
-    //TODO:: look for a way to edit the currentplayer variable to a player instead of a int (maybe iterator over the list?)
     //Card Actions:
     /**
      * Play a given card and execute all the actions of the card.
@@ -206,7 +184,7 @@ public class GameEngine implements Serializable {
                 played = true;
             }
             if (card.isTreasure()) {
-                playTreasure(card);
+                player.addCoins(card.getCoins());
                 played = true;
             }
             if (played) {
@@ -229,16 +207,6 @@ public class GameEngine implements Serializable {
         player.addBuys(card.getBuys());
         player.addCoins(card.getCoins());
         drawCardsFromPlayerDeck(player, card.getDraws());
-    }
-
-    /**
-     * Play a card as a treasure card.
-     *
-     * @param card The treasure card to play.
-     */
-    private void playTreasure(Card card) {
-        Player player = getCurrentPlayer();
-        player.addCoins(card.getCoins());
     }
 
     /**
@@ -310,6 +278,15 @@ public class GameEngine implements Serializable {
     }
 
     //Engine actions:
+
+    /**
+     * Return the current playing player.
+     * @return The current player.
+     */
+    public Player getCurrentPlayer() {
+        return players.get(currentPlayer);
+    }
+    
     /**
      * If player has no actions or has no playable cards in hand then change
      * phase to "Buy".
@@ -397,10 +374,6 @@ public class GameEngine implements Serializable {
         return gameTable.get(stack.toLowerCase());
     }
 
-    public Player getCurrentPlayer() {
-        return players.get(currentPlayer);
-    }
-
     public String getPhase() {
         return this.phase;
     }
@@ -431,18 +404,6 @@ public class GameEngine implements Serializable {
 
     public List<Player> getPlayers() {
         return this.players;
-    }
-
-    public void addVictoryCardsForTest() {
-        this.getCurrentPlayer().getDeck("discard").add(usedCards.get("estate"));
-        this.getCurrentPlayer().getDeck("hand").add(usedCards.get("province"));
-        this.getCurrentPlayer().getDeck("deck").add(usedCards.get("duchy"));
-    }
-
-    public void addVictoryAndGardenCardsForTest() {
-        this.getCurrentPlayer().getDeck("discard").add(usedCards.get("estate"));
-        this.getCurrentPlayer().getDeck("hand").add(usedCards.get("province"));
-        this.getCurrentPlayer().getDeck("deck").add(usedCards.get("gardens"));
     }
 
     // Todo do all actions
@@ -519,3 +480,26 @@ public class GameEngine implements Serializable {
         }
     }
 }
+
+
+//    public Deck getChoosableKingdomCardsArray() {
+//        ArrayList<String> tmp = new cardConnection().getKingdomCards(this.expansions);
+//        for (String cardName : tmp) {
+//            this.choosableKingdomCards.add(new Card(cardName));
+//        }
+//        return this.choosableKingdomCards;
+//    }
+//
+//    public String[][] getChoosablePremadeSets() {
+//        ArrayList<String> tmp = new PremadeSetsConnection().getAllSetNames();
+//        String[][] choosableSets = new String[tmp.size()][11];
+//        for (int i = 0; i < tmp.size(); i++) {
+//            choosableSets[i][0] = tmp.get(i);
+//            ArrayList<String> cardNames = new PremadeSetsConnection().getKingdomSet(tmp.get(i));
+//            for (int j = 0; j < cardNames.size(); j++) {
+//                choosableSets[i][j + 1] = cardNames.get(j);
+//            }
+//
+//        }
+//        return choosableSets;
+//    }
