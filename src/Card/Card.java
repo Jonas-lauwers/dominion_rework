@@ -92,7 +92,7 @@ public class Card implements Serializable, Comparable<Object> {
         return cardState.getVictoryPoints();
     }
 
-    public boolean isAction() {
+    public boolean isKingdom() {
         if (this.type.equals("Action") || this.type.equals("Attack") || this.type.equals("Reaction")) {
             return true;
         }
@@ -112,14 +112,21 @@ public class Card implements Serializable, Comparable<Object> {
         }
         return false;
     }
+    
+    public boolean isReaction() {
+        if (this.type.equals("Reaction")) {
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public String toString() {
-        if (this.type.equals("Treasure") || this.type.equals("Victory") || this.name.equals("Curse")) {
-            return String.format("%-10s Cost: %1d\n", this.getName(), this.getCost());
+        if (this.isKingdom() ) {
+            return String.format("%-20s Cost: %1d - Actions: %1d - Buys: %1d - Coins: %1d - Cards: %1d - Description: %s\n", this.getName(), this.getCost(), this.getActions(), this.getBuys(), this.getCoins(), this.getDraws(), this.getDescription());
         }
-        return String.format("%-20s Cost: %1d - Actions: %1d - Buys: %1d - Coins: %1d - Cards: %1d - Description: %s\n", this.getName(), this.getCost(), this.getActions(), this.getBuys(), this.getCoins(), this.getDraws(), this.getDescription());
-}
+        return String.format("%-10s Cost: %1d\n", this.getName(), this.getCost());
+    }
     
     @Override
     public int compareTo(Object o) {
