@@ -1,9 +1,11 @@
 package Engine;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.io.Serializable;
 import Card.Card;
 
-import java.io.Serializable;
 
 /**
  * An object representing deck to hold cards. It can hold equal Card objects.
@@ -20,7 +22,7 @@ public class Deck implements Serializable, Iterable<Card> {
      * Creates an empty deck.
      */
     public Deck() {
-        deck = new ArrayList<Card>();
+        deck = new ArrayList<>();
     }
 
     /**
