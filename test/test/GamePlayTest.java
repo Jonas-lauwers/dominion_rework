@@ -38,7 +38,6 @@ public class GamePlayTest {
     public void playOneTreasureCardInBuyPhaseTest() {
         Deck deck = ge.getCurrentPlayer().getDeck("hand");
         int coins = 0;
-        String phase = ge.getPhase();
         for (Card c : deck) {
             if (c.isTreasure()) {
                 coins = c.getCoins();
@@ -47,11 +46,6 @@ public class GamePlayTest {
             }
         }
         assertEquals(coins, ge.getCurrentPlayer().getCoins());
-        if (ge.getCurrentPlayer().getDeck("hand").hasKingdomCards()) {
-            assertEquals(phase, ge.getPhase());
-        } else {
-            assertNotEquals(phase, ge.getPhase());
-        }
     }
 
     @Test
@@ -59,7 +53,6 @@ public class GamePlayTest {
     public void playAllTreasureCardInBuyPhaseTest() {
         Deck deck = ge.getCurrentPlayer().getDeck("hand");
         int coins = 0;
-        String phase = ge.getPhase();
         for (int i = 0; i < deck.size(); i++) {
             Card c = deck.getCard(i);
             if (c.isTreasure()) {
@@ -69,7 +62,6 @@ public class GamePlayTest {
             }
         }
         assertEquals(coins, ge.getCurrentPlayer().getCoins());
-        assertNotEquals(phase, ge.getPhase());
     }
 
     @Test
@@ -131,13 +123,13 @@ public class GamePlayTest {
     }
     
     @Test
-    //Test if player can change phase, and if changed test if turn is over when he changes a second time.
+    //Test if player changes after ending buy phase
+    //Since the game starts in buy phase only need to change one time.
     public void changeTurnAndEndTurnTest() {
         String phase = ge.getPhase();
-        ge.endPhase();
-        assertNotEquals(phase, ge.getPhase());
         Player p = ge.getCurrentPlayer();
         ge.endPhase();
+        assertNotEquals(phase, ge.getPhase());
         assertNotEquals(p, ge.getCurrentPlayer());
     }
 

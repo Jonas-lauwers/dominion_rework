@@ -67,12 +67,12 @@ public class GameEngine implements Serializable {
         return this.choosableKingdomCards.toString();
     }
 
-    public String[] getChoosableKingdomCardsArray() {
+    public Deck getChoosableKingdomCardsArray() {
         ArrayList<String> tmp = new cardConnection().getKingdomCards(this.expansions);
         for (String cardName : tmp) {
             this.choosableKingdomCards.add(new Card(cardName));
         }
-        return this.choosableKingdomCards.toStringArray();
+        return this.choosableKingdomCards;
     }
 
     public String[][] getChoosablePremadeSets() {
@@ -190,11 +190,10 @@ public class GameEngine implements Serializable {
 
     //INFO: here starts gameplay:
     //TODO:: look for a way to edit the currentplayer variable to a player instead of a int (maybe iterator over the list?)
-    
     //Card Actions:
-    
     /**
      * Play a given card and execute all the actions of the card.
+     *
      * @param card The card to play.
      * @return True if card is played.
      */
@@ -202,15 +201,15 @@ public class GameEngine implements Serializable {
         Player player = getCurrentPlayer();
         if (card.isPlayable()) {
             boolean played = false;
-            if((player.getActions() > 0) && card.isKingdom()) {
+            if ((player.getActions() > 0) && card.isKingdom()) {
                 playAction(card);
                 played = true;
             }
-            if(card.isTreasure()) {
+            if (card.isTreasure()) {
                 playTreasure(card);
                 played = true;
             }
-            if(played) {
+            if (played) {
                 moveCardFromHandToDiscard(card);
                 checkPhaseChange();
                 return true;
@@ -218,9 +217,10 @@ public class GameEngine implements Serializable {
         }
         return false;
     }
-    
+
     /**
      * Play the card as an action card.
+     *
      * @param card The action card to play.
      */
     private void playAction(Card card) {
@@ -230,18 +230,20 @@ public class GameEngine implements Serializable {
         player.addCoins(card.getCoins());
         drawCardsFromPlayerDeck(player, card.getDraws());
     }
-    
+
     /**
      * Play a card as a treasure card.
+     *
      * @param card The treasure card to play.
      */
     private void playTreasure(Card card) {
         Player player = getCurrentPlayer();
         player.addCoins(card.getCoins());
     }
-          
+
     /**
      * Buy a card from a stack on the game table.
+     *
      * @param card The card to buy
      * @param stackName The name of the stack to buy from.
      * @return True if player has buys, enough coins and the stack wasn't empty
@@ -259,22 +261,24 @@ public class GameEngine implements Serializable {
         }
         return false;
     }
-    
+
     //Deck actions
-    
     /**
      * Move card from hand to discard of the current player.
+     *
      * @param card The card to discard.
      */
     private boolean moveCardFromHandToDiscard(Card card) {
         Player player = getCurrentPlayer();
         return player.getDeck("hand").moveCardToDeck(card, player.getDeck("table"));
     }
-    
+
     /**
-     * Draw a card from the stack on the game table and put in in the players deck.
+     * Draw a card from the stack on the game table and put in in the players
+     * deck.
+     *
      * @param stack Stack to draw from.
-     * @param card  Card to draw.
+     * @param card Card to draw.
      * @param player Player who draws the card.
      * @param toDeck Deck in which to put the card.
      * @return True if card is in stack.
@@ -286,27 +290,29 @@ public class GameEngine implements Serializable {
         }
         return false;
     }
-    
+
     /**
-     * Draw a card from the stack on the game table and put in in the players discard deck.
+     * Draw a card from the stack on the game table and put in in the players
+     * discard deck.
+     *
      * @param stack Stack to draw from.
-     * @param card  Card to draw.
+     * @param card Card to draw.
      * @param player Player who draws the card
      * @return True if card is in stack.
      */
     private boolean drawCardFromTable(Stack stack, Card card, Player player) {
         return drawCardFromTable(stack, card, player, "discard");
     }
+
     //TODO: remove this it's only temporary
     public boolean drawCardFromTable(String stack, Card card, Player player, String toDeck) {
         return drawCardFromTable(getStack(stack), card, player, toDeck);
-    }   
-    
-    
+    }
+
     //Engine actions:
-    
     /**
-     * If player has no actions or has no playable cards in hand then change phase to "Buy".
+     * If player has no actions or has no playable cards in hand then change
+     * phase to "Buy".
      */
     private void checkPhaseChange() {
         Player player = getCurrentPlayer();
@@ -314,19 +320,18 @@ public class GameEngine implements Serializable {
             this.phase = "buy";
         }
     }
-    
+
     /**
      * Change between phase or end turn.
      */
     public void endPhase() {
-        if(phase.equals("action")) {
+        if (phase.equals("action")) {
             phase = "buy";
-        }
-        else {
+        } else {
             endTurn();
         }
     }
-    
+
     /**
      * End turn.
      */
@@ -347,24 +352,25 @@ public class GameEngine implements Serializable {
             this.phase = "action";
         }
     }
-    
+
     /**
      * Checks whether the goals to end the game has been reached.
+     *
      * @return True if the province stack or 3 stacks in total are empty.
      */
     public boolean checkGameEnd() {
         int emptyStacks = 0;
-        for(Map.Entry<String,Stack> entry:gameTable.entrySet()) {
-            if(!entry.getKey().equals("curse") && !entry.getKey().equals("treasure")) {
+        for (Map.Entry<String, Stack> entry : gameTable.entrySet()) {
+            if (!entry.getKey().equals("curse") && !entry.getKey().equals("treasure")) {
                 Stack s = entry.getValue();
-                for(Card c:s.getCards()) {
-                    if(c.getName().equals("province") && s.isEmpty(c)) {
+                for (Card c : s.getCards()) {
+                    if (c.getName().equals("province") && s.isEmpty(c)) {
                         return true;
                     }
-                    if(s.isEmpty(c)) {
+                    if (s.isEmpty(c)) {
                         emptyStacks++;
                     }
-                    if(emptyStacks >=3) {
+                    if (emptyStacks >= 3) {
                         return true;
                     }
                 }
@@ -372,7 +378,7 @@ public class GameEngine implements Serializable {
         }
         return false;
     }
-    
+
     /**
      * Ends the game and counts the score for all player.
      */
@@ -384,9 +390,7 @@ public class GameEngine implements Serializable {
             p.setScore(p.getDeck("deck").countVictoryPoints());
         }
     }
-       
-       
-       
+
     //TODO: update these to be compliant to reworked functions.
     //Original functions before refactoring:
     public Stack getStack(String stack) {
@@ -424,7 +428,7 @@ public class GameEngine implements Serializable {
         player.getDeck("discard").moveDeckTo(player.getDeck("deck"));
         player.getDeck("deck").shuffle();
     }
-    
+
     public List<Player> getPlayers() {
         return this.players;
     }
@@ -457,7 +461,7 @@ public class GameEngine implements Serializable {
             return false;
         }
     }
-    
+
     public void getCardOfValue(String stackName, Card card, int maxValue, String toDeck) {
         Stack stack = getStack(stackName);
         if (card.getCost() <= maxValue) {
@@ -474,7 +478,7 @@ public class GameEngine implements Serializable {
 
     public void trashPlayedCard() {
         Player player = getCurrentPlayer();
-        player.getDeck("table").moveCardToDeck((player.getDeck("table").size() - 1), player.getDeck("trash"));
+        player.getDeck("table").moveCardToDeck((player.getDeck("table").size()- 1), player.getDeck("trash"));
     }
 
     public Card getSelectedCard(int cardNumber) {
@@ -496,7 +500,7 @@ public class GameEngine implements Serializable {
         playerStatus += String.format("Cards in hand:\n%s", p.getDeck("hand").toString());
         return playerStatus;
     }
-    
+
     public String getTableStatus() {
         String tableStatus = String.format("Overview of table:\n");
         tableStatus += String.format("Treasure Cards:\n%s", getStack("treasure"));
@@ -506,9 +510,12 @@ public class GameEngine implements Serializable {
         return tableStatus;
     }
 
-    // temporary test functions to test :P
-    public void setDeckCount(int count) {
-        gameTable.get("victory").setCount(new Card("province"), 0);
+    // Test function , maybe move to test file?
+    public void setProvinceCountToNull() {
+        Card card = new Card("province");
+        Stack stack = gameTable.get("victory");
+        if (stack.getNumberOfCards(card) > 0) {
+            stack.add(card, -stack.getNumberOfCards(card));
+        }
     }
-
 }

@@ -1,25 +1,32 @@
 package Engine;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.io.Serializable;
 import Card.Card;
 
-import java.io.Serializable;
-//Comparable<Object>
 
+/**
+ * An object representing deck to hold cards. It can hold equal Card objects.
+ * Has functions to check if it contains cards of a certain type.
+ *
+ * @author Jonas Lauwers <jonas.lauwers AT gmail.org>
+ */
 public class Deck implements Serializable, Iterable<Card> {
 
     static final long serialVersionUID = 1337;
-    private ArrayList<Card> deck;
+    private final ArrayList<Card> deck;
 
     /**
      * Creates an empty deck.
      */
     public Deck() {
-        deck = new ArrayList<Card>();
+        deck = new ArrayList<>();
     }
 
     /**
-     * Add a card to deck.
+     * Add a card to the end of the deck.
      *
      * @param card The card to add.
      */
@@ -29,12 +36,22 @@ public class Deck implements Serializable, Iterable<Card> {
 
     /**
      * Add card to the deck at a certain index.
+     * If index is smaller than 0 then it adds the card at the beginning of the deck.
+     * If index is greater then it's size it adds the card at the end of the deck.
      *
      * @param index The index to place the card.
      * @param card The card to add.
      */
     public void add(int index, Card card) {
-        deck.add(index, card);
+        if(index < 0) {
+            deck.add(0, card);
+        }
+        else if(index >= deck.size()) {
+            deck.add(card);
+        }
+        else {
+            deck.add(index, card);
+        }
     }
 
     /**
@@ -44,14 +61,14 @@ public class Deck implements Serializable, Iterable<Card> {
      * @return The card at the index or null if index doesn't exist.
      */
     public Card getCard(int cardNumber) {
-        if (cardNumber < deck.size()) {
+        if (0 <= cardNumber && cardNumber < deck.size()) {
             return deck.get(cardNumber);
         }
         return null;
     }
 
     /**
-     * Remove the card from the deck.
+     * Remove the first occurrence of card from the deck.
      *
      * @param card The card to remove
      * @return True if card was in deck.
@@ -69,18 +86,17 @@ public class Deck implements Serializable, Iterable<Card> {
      */
     //TODO: check if this version of this is still needed.
     public boolean remove(int cardNumber) {
-        try {
+        if(0 <= cardNumber && cardNumber < deck.size()) {
             deck.remove(cardNumber);
             return true;
-        } catch (Exception e) {
-            return false;
         }
+        return false;
     }
 
     /**
      * Remove the first card of the deck and returns it.
      *
-     * @return Returns the first card.
+     * @return Returns the first card or null if deck is emtpy.
      *
      */
     public Card pop() {
@@ -117,7 +133,7 @@ public class Deck implements Serializable, Iterable<Card> {
      *
      * @param card The card to move.
      * @param deck The deck where to move the card to.
-     * @return True i card exists in deck.
+     * @return True if card exists in deck.
      */
     //TODO: Check if this version is needed.
     public boolean moveCardToDeck(Card card, Deck deck) {
@@ -138,40 +154,10 @@ public class Deck implements Serializable, Iterable<Card> {
      */
     //TODO: Check if this version is needed.
     public boolean moveCardToDeck(int cardNumber, Deck deck) {
-        if (cardNumber < this.deck.size()) {
+        if (0 <= cardNumber && cardNumber < this.deck.size()) {
             deck.add(this.getCard(cardNumber));
             this.remove(cardNumber);
             return true;
-        }
-        return false;
-    }
-
-//    /**
-//     * Checks if the deck contains cards of the type.
-//     * @param cardType The card type you want to look for
-//     * @return True if it does contain cards.
-//     */
-//    private boolean hasCardOfType(String cardType) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-//        for (Card c : deck) {
-//            Method method = this.getClass().getDeclaredMethod("is"+cardType.replace(cardType.charAt(0), (char)(cardType.charAt(0)+26)));
-//            method.invoke(c);
-//            if (c.getType().equals(cardType)) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-    //TODO: make above function functional and clean up below!!!
-    /**
-     * Check if the deck contains any kingdom cards.
-     *
-     * @return Returns true if it contains kingdom cards.
-     */
-    public boolean hasKingdomCards() {
-        for (Card c : deck) {
-            if (c.getType().equals("Action") || c.getType().equals("Attack") || c.getType().equals("Reaction")) {
-                return true;
-            }
         }
         return false;
     }
@@ -189,7 +175,26 @@ public class Deck implements Serializable, Iterable<Card> {
         }
         return false;
     }
+    
+    /**
+     * Check if the deck contains any kingdom cards.
+     *
+     * @return Returns true if it contains kingdom cards.
+     */
+    public boolean hasKingdomCards() {
+        for (Card c : deck) {
+            if (c.isKingdom()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
+    /**
+     * Check if the deck contains any reaction cards.
+     *
+     * @return Returns true if it contains reaction cards.
+     */
     public boolean hasReactionCards() {
         for (Card c : deck) {
             if (c.isReaction()) {
@@ -199,6 +204,11 @@ public class Deck implements Serializable, Iterable<Card> {
         return false;
     }
 
+    /**
+     * Check if the deck contains any victory cards.
+     *
+     * @return Returns true if it contains victory cards.
+     */
     public boolean hasVictoryCards() {
         for (Card c : deck) {
             if (c.isVictory()) {
@@ -208,6 +218,11 @@ public class Deck implements Serializable, Iterable<Card> {
         return false;
     }
 
+    /**
+     * Check if the deck contains any treasure cards.
+     *
+     * @return Returns true if it contains treasure cards.
+     */
     public boolean hasTreasureCards() {
         for (Card c : deck) {
             if (c.isTreasure()) {
@@ -218,21 +233,22 @@ public class Deck implements Serializable, Iterable<Card> {
     }
 
     /**
-     * Counts all the victory points that are in the given deck. Takes in acount
-     * the Garden card.
+     * Counts all the victory points that are in the given deck. 
+     * Takes in account the Garden card.
      *
      * @return The total amount of points in the deck.
      */
-    //TODO: clean up and delegate some stuff to cards!
+    //TODO: probably try to move this to engine, only engine knows how to count this stuff.
     public int countVictoryPoints() {
         int victoryPoints = 0;
         int gardenCard = 0;
-        if (!deck.isEmpty()) {
+        if (this.hasVictoryCards()) {
             for (Card c : deck) {
-                if (c.getName().equals("gardens")) {
-                    gardenCard++;
-                } else if (c.getType().equals("Victory")) {
+                if (c.isVictory()) {
                     victoryPoints += c.getVictoryPoints();
+                    if (c.getName().equals("gardens")) {
+                        gardenCard++;
+                    }
                 }
             }
             if (gardenCard > 0) {
@@ -243,8 +259,7 @@ public class Deck implements Serializable, Iterable<Card> {
     }
 
     /**
-     * Checks whether a normal deck is empty. For limited card decks us
-     * isEmpty(Card card)
+     * Checks whether a normal deck is empty.
      *
      * @return True if deck is empty.
      */
@@ -260,59 +275,23 @@ public class Deck implements Serializable, Iterable<Card> {
     public int size() {
         return deck.size();
     }
-
-    //TODO: mae the cards comparable so we can sort them in the limited card decks( for kingdomCards deck for example)
-//    @Override
-//    public int compareTo(Object o) {
-//        if (o instanceof Deck) {
-//            Deck d = ((Deck) o);
-//            if (this.isSingleCardDeck && d.isSingleCardDeck) {
-//                if (this.getCard(0).getCost() > d.getCard(0).getCost()) {
-//                    return 1;
-//                } else if (this.getCard(0).getCost() < d.getCard(0).getCost()) {
-//                    return -1;
-//                } else {
-//                    return 0;
-//                }
-//            } else {
-//                return 0;
-//            }
-//        } else {
-//            throw new IllegalArgumentException();
-//        }
-//    }
+    
     @Override
     public String toString() {
         if (deck.isEmpty()) {
-            return "\n";
+            return "";
         } else {
             String deckContent = "";
             int i = 1;
             for (Card c : deck) {
-                deckContent += String.format("\t%02d) %s", i, c.toString());
+                deckContent += String.format("%02d) %s", i, c.toString());
+                if(i < deck.size()) {
+                    deckContent += "\n";
+                }
                 i++;
             }
             return deckContent;
         }
-    }
-
-    //TODO: verify if we will need this after refactoring GameEngine
-    public String[] toStringArray() {
-        if (deck.isEmpty()) {
-            return new String[]{};
-        }
-//        if (!isSingleCardDeck) {
-        String[] deckArray = new String[deck.size()];
-        for (Card c : deck) {
-            deckArray[deckArray.length] = c.getName();
-        }
-//            for (int i = 0; i < deck.size(); i++) {
-//                deckArray[i] = this.getCard(i).getName();
-//            }
-        return deckArray;
-//        } else {
-//            return new String[]{this.getCard(0).getName(), String.valueOf(this.numberOfCards)};
-//        }
     }
 
     @Override

@@ -1,21 +1,32 @@
 package Card;
 
-import Database_connection.cardConnection;
-
 import java.io.Serializable;
 import java.util.Objects;
+import Database_connection.cardConnection;
 
+/**
+ * A card object, on creation gives the card a specific state depending on 
+ * it's type. Is just a container to hold all information about the card.
+ * 
+ * @author Jonas Lauwers <jonas.lauwers AT gmail.org>
+ */
 public class Card implements Serializable, Comparable<Object> {
 
     static final long serialVersionUID = 1337;
-    private String name;
-    private String description;
-    private String type;
-    private int cost;
-    String[] dbOutput;
-
+    private final String name;
+    private final String description;
+    private final String type;
+    private final int cost;
+    final String[] dbOutput;
+    
     CardState cardState;
 
+    /**
+     * Creates a new card based on the name. 
+     * Gets all the card information from the database.
+     * 
+     * @param name The name of the card
+     */
     public Card(String name) {
         dbOutput = new cardConnection().getCard(name);
         this.name = name.toLowerCase();
@@ -27,6 +38,9 @@ public class Card implements Serializable, Comparable<Object> {
 
     }
 
+    /**
+     * Gives the card a state depending on it's type.
+     */
     private void giveState() {
         switch (type) {
             case "Attack":
@@ -51,47 +65,102 @@ public class Card implements Serializable, Comparable<Object> {
 
     }
 
+    /**
+     * Return the name of the card.
+     * 
+     * @return The name of the card.
+     */
     public String getName() {
         return this.name;
     }
 
+    /**
+     * Return the description of the card.
+     * 
+     * @return The description of the card.
+     */
     public String getDescription() {
         return this.description;
     }
 
+    /**
+     * Return the cost value of the card.
+     * 
+     * @return The cost value of the card.
+     */
     public int getCost() {
         return this.cost;
     }
 
+    /**
+     * Return the type of the card.
+     * 
+     * @return The type of the card.
+     */
     public String getType() {
         return this.type;
     }
 
+    /**
+     * Return the coins value of the card.
+     *
+     * @return The coins value of the card.
+     */
     public int getCoins() {
         return cardState.getCoins();
     }
 
+    /**
+     * Return the buys value of the card.
+     * 
+     * @return The buys value of the card.
+     */
     public int getBuys() {
         return cardState.getBuys();
     }
 
+    /**
+     * Return the actions value of the card.
+     * 
+     * @return The actions value of the card.
+     */
     public int getActions() {
         return cardState.getActions();
     }
 
+    /**
+     * Return the draws value of the card.
+     * 
+     * @return The draws value of the card.
+     */
+    public int getDraws() {
+        return cardState.getDraws();
+    }
+
+    /**
+     * Return the victory value of the card.
+     * 
+     * @return The victory value of the card.
+     */
+    public int getVictoryPoints() {
+        return cardState.getVictoryPoints();
+    }
+
+    /**
+     * Returns whether the card is playable or not.
+     * 
+     * @return True if playable.
+     */
     //TODO change the cardstate function to a more logic result
     public boolean isPlayable() {
         return !(cardState.getPlayableTurn().equals("never"));
     }
 
-    public int getDraws() {
-        return cardState.getDraws();
-    }
-
-    public int getVictoryPoints() {
-        return cardState.getVictoryPoints();
-    }
-
+    /**
+     * Returns whether the card is kingdom card or not.
+     * 
+     * @return True if kingdom card.
+     */
     public boolean isKingdom() {
         if (this.type.equals("Action") || this.type.equals("Attack") || this.type.equals("Reaction")) {
             return true;
@@ -99,6 +168,11 @@ public class Card implements Serializable, Comparable<Object> {
         return false;
     }
 
+    /**
+     * Returns whether the card is treasure card or not.
+     * 
+     * @return True if treasure card.
+     */
     public boolean isTreasure() {
         if (this.type.equals("Treasure")) {
             return true;
@@ -106,6 +180,11 @@ public class Card implements Serializable, Comparable<Object> {
         return false;
     }
     
+    /**
+     * Returns whether the card is victory card or not.
+     * 
+     * @return True if victory card.
+     */
     public boolean isVictory() {
         if (this.type.equals("Victory")) {
             return true;
@@ -113,6 +192,11 @@ public class Card implements Serializable, Comparable<Object> {
         return false;
     }
     
+    /**
+     * Returns whether the card is reaction card or not.
+     * 
+     * @return True if reaction card.
+     */
     public boolean isReaction() {
         if (this.type.equals("Reaction")) {
             return true;
@@ -123,9 +207,9 @@ public class Card implements Serializable, Comparable<Object> {
     @Override
     public String toString() {
         if (this.isKingdom() ) {
-            return String.format("%-20s Cost: %1d - Actions: %1d - Buys: %1d - Coins: %1d - Cards: %1d - Description: %s\n", this.getName(), this.getCost(), this.getActions(), this.getBuys(), this.getCoins(), this.getDraws(), this.getDescription());
+            return String.format("%-20s Cost: %1d - Actions: %1d - Buys: %1d - Coins: %1d - Cards: %1d - Description: %s", this.getName(), this.getCost(), this.getActions(), this.getBuys(), this.getCoins(), this.getDraws(), this.getDescription());
         }
-        return String.format("%-10s Cost: %1d\n", this.getName(), this.getCost());
+        return String.format("%-10s Cost: %1d", this.getName(), this.getCost());
     }
     
     @Override
