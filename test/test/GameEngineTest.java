@@ -119,7 +119,7 @@ public class GameEngineTest {
 		ge.getChoosableKingdomCards();
 		ge.setPlayableKingdomCards(new int[] {0,1,2,3,4,5,6,7,8,9});
 		ge.startGame();
-		ge.setDeckCount(0);
+		ge.setProvinceCountToNull();
 		ge.endTurn();
 		List<Player> players = ge.getPlayers();
 		assertEquals(3, players.get(0).getScore());
@@ -138,7 +138,7 @@ public class GameEngineTest {
 		ge.addVictoryCardsForTest();
 		ge.addVictoryCardsForTest();
 		ge.addVictoryAndGardenCardsForTest();
-		ge.setDeckCount(0);
+		ge.setProvinceCountToNull();
 		ge.endTurn();
 		List<Player> players = ge.getPlayers();
 		assertEquals(31, players.get(0).getScore());
@@ -263,59 +263,10 @@ public class GameEngineTest {
 		ge.getChoosableKingdomCards();
 		ge.setPlayableKingdomCards(new int[] {0,1,2,3,4,5,6,7,8,18});
 		ge.startGame();
-		ge.getCurrentPlayer().getDeck("hand").add(new Card("Copper"));
-		Card trashcard = ge.getSelectedCard(5);
+		Card trashcard = new Card("copper");
+		ge.getCurrentPlayer().getDeck("hand").add(trashcard);
 		ge.playCard(trashcard);
 		ge.trashPlayedCard();
 		assertEquals(trashcard, ge.getCurrentPlayer().getDeck("trash").getCard(0));
 	}
-	
-	/**
-	@Test
-	public void playCardWithThroneRoom() {
-		ge = new GameEngine();
-		ge.addPlayer("jonas");
-		ge.addPlayer("emiel");
-		ge.setExpansions("Dominion");
-		ge.getChoosableKingdomCards();
-		ge.setPlayableKingdomCards(new int[] {0,1,2,3,4,5,6,7,8,18});
-		ge.startGame();
-		ge.getCurrentPlayer().getDeck("Hand").add(new Card("Market"));
-		ge.playCardWithThroneRoom(5);
-		assertEquals(2, ge.getCurrentPlayer().getCoins());
-		assertEquals(3, ge.getCurrentPlayer().getBuys());
-		assertEquals(3, ge.getCurrentPlayer().getActions());
-		assertEquals(7, ge.getCurrentPlayer().getDeck("Hand").size());
-	}
-	
-	@Test
-	public void drawEnemyPlayers() {
-		ge = new GameEngine();
-		ge.addPlayer("jonas");
-		ge.addPlayer("emiel");
-		ge.setExpansions("Dominion");
-		ge.getChoosableKingdomCards();
-		ge.setPlayableKingdomCards(new int[] {0,1,2,3,4,5,6,7,8,18});
-		ge.startGame();
-		ge.drawEnemyPlayers();
-		for(Player p:ge.getPlayers()) {
-			if (p != ge.getCurrentPlayer()) {
-				assertEquals(4, p.getDeck("Deck").size());
-			}
-		}
-	}
-	
-	@Test
-	public void drawForAdventurer() {
-		ge = new GameEngine();
-		ge.addPlayer("jonas");
-		ge.addPlayer("emiel");
-		ge.setExpansions("Dominion");
-		ge.getChoosableKingdomCards();
-		ge.setPlayableKingdomCards(new int[] {0,1,2,3,4,5,6,7,8,18});
-		ge.startGame();
-		ge.drawForAdventurer();
-		assertEquals(7, ge.getCurrentPlayer().getDeck("Hand").size());
-	}
-	**/
 }
