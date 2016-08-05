@@ -191,15 +191,13 @@ public class GameEngine implements Serializable {
     //INFO: here starts gameplay:
     //TODO:: look for a way to edit the currentplayer variable to a player instead of a int (maybe iterator over the list?)
     
-    //Player Actions:
-    
+    //Card Actions:
     
     /**
      * Play a given card and execute all the actions of the card.
      * @param card The card to play.
      * @return True if card is played.
      */
-    //TODO:: add functionality for reaction
     public boolean playCard(Card card) {
         Player player = getCurrentPlayer();
         if (card.isPlayable()) {
@@ -219,6 +217,27 @@ public class GameEngine implements Serializable {
             }
         }
         return false;
+    }
+    
+    /**
+     * Play the card as an action card.
+     * @param card The action card to play.
+     */
+    private void playAction(Card card) {
+        Player player = getCurrentPlayer();
+        player.addActions(card.getActions() - 1);
+        player.addBuys(card.getBuys());
+        player.addCoins(card.getCoins());
+        drawCardsFromPlayerDeck(player, card.getDraws());
+    }
+    
+    /**
+     * Play a card as a treasure card.
+     * @param card The treasure card to play.
+     */
+    private void playTreasure(Card card) {
+        Player player = getCurrentPlayer();
+        player.addCoins(card.getCoins());
     }
           
     /**
@@ -241,39 +260,8 @@ public class GameEngine implements Serializable {
         return false;
     }
     
-    //Engine actions:
+    //Deck actions
     
-    /**
-     * Play the card as an action card.
-     * @param card The action card to play.
-     */
-    private void playAction(Card card) {
-        Player player = getCurrentPlayer();
-        player.addActions(card.getActions() - 1);
-        player.addBuys(card.getBuys());
-        player.addCoins(card.getCoins());
-        drawCardsFromPlayerDeck(player, card.getDraws());
-    }
-    
-    /**
-     * Play a card as a treasure card.
-     * @param card The treasure card to play.
-     */
-    private void playTreasure(Card card) {
-        Player player = getCurrentPlayer();
-        player.addCoins(card.getCoins());
-    }
-    
-    /**
-     * If player has no actions or has no playable cards in hand then change phase to "Buy".
-     */
-    private void checkPhaseChange() {
-        Player player = getCurrentPlayer();
-        if (player.getActions() == 0 || !player.getDeck("hand").hasKingdomCards()) {
-            this.phase = "buy";
-        }
-    }
-
     /**
      * Move card from hand to discard of the current player.
      * @param card The card to discard.
@@ -312,6 +300,19 @@ public class GameEngine implements Serializable {
     //TODO: remove this it's only temporary
     public boolean drawCardFromTable(String stack, Card card, Player player, String toDeck) {
         return drawCardFromTable(getStack(stack), card, player, toDeck);
+    }   
+    
+    
+    //Engine actions:
+    
+    /**
+     * If player has no actions or has no playable cards in hand then change phase to "Buy".
+     */
+    private void checkPhaseChange() {
+        Player player = getCurrentPlayer();
+        if (player.getActions() == 0 || !player.getDeck("hand").hasKingdomCards()) {
+            this.phase = "buy";
+        }
     }
     
     /**
@@ -496,7 +497,6 @@ public class GameEngine implements Serializable {
         return playerStatus;
     }
     
-    //TODO: update stack to be printable, now will print memory location.
     public String getTableStatus() {
         String tableStatus = String.format("Overview of table:\n");
         tableStatus += String.format("Treasure Cards:\n%s", getStack("treasure"));
@@ -509,133 +509,6 @@ public class GameEngine implements Serializable {
     // temporary test functions to test :P
     public void setDeckCount(int count) {
         gameTable.get("victory").setCount(new Card("province"), 0);
-//        gameTable.get("victory")[2].setCount(count);
     }
 
-    
-
-//    public void drawCardFromTable(Deck deck, Card card, Player player, String toDeck) {
-//        if (deck.size() != 0) {
-//            deck.remove(0);
-//            player.getDeck(toDeck).add(card);
-//        }
-//    }
-
-//    public void drawCardFromTable(Deck deck, Card card, Player player) {
-//        drawCardFromTable(deck, card, player, "discard");
-//    }
-
-//    public boolean checkGameEnd() {
-//        if (emptyStackCheck(gameTable.get("victory")[2])) {
-//            return true;
-//        }
-//
-//        int emptyStacks = 0;
-//
-//        for (Deck d : gameTable.get("kingdom")) {
-//            if (emptyStackCheck(d)) {
-//                emptyStacks++;
-//            }
-//        }
-//        if (emptyStacks < 3) {
-//            for (Deck d : gameTable.get("victory")) {
-//                if (emptyStackCheck(d)) {
-//                    emptyStacks++;
-//                }
-//            }
-//        }
-//        if (emptyStacks < 3) {
-//            for (Deck d : gameTable.get("treasure")) {
-//                if (emptyStackCheck(d)) {
-//                    emptyStacks++;
-//                }
-//            }
-//        }
-//
-//        return emptyStacks >= 3;
-//
-//    }
-
-//	public boolean playCard(int cardNumber, boolean isAction) {
-//		Player player = getCurrentPlayer();
-//		Card card = player.getDeck("hand").getCard(cardNumber);
-//		if (card.getPlayableTurn() != "never" && (!this.phase.equals("Buy"))) {
-//			if (card.getType().equals("Treasure"))
-//			{
-//			player.getDeck("hand").moveCardToDeck(cardNumber, player.getDeck("table"));
-//			getCurrentPlayer().addCoins(card.getCoins());
-//			}
-//			if ((player.getActions() != 0 && card.isAction()) || isAction) {
-//				if(!isAction) {
-//					player.getDeck("hand").moveCardToDeck(cardNumber, player.getDeck("table"));
-//					player.addActions(-1);
-//				}
-//				getCurrentPlayer().addCoins(card.getCoins());
-//				player.addActions(card.getActions());
-//				player.addBuys(card.getBuys());
-//				drawCardsFromPlayerDeck(player, card.getDraws());
-//				return true; 
-//			}
-//		}	
-//		return false;
-//	}
-//	
-//	public boolean playCard(int cardNumber) {
-//		return playCard(cardNumber, false);
-//	}
-//    public void buyCard(String deckList, int cardNumber, boolean isAction) {
-//        Player player = getCurrentPlayer();
-//        Deck deck = gameTable.get(deckList)[cardNumber];
-//        Card card = deck.getCard(0);
-//        if (player.getBuys() != 0) {
-//            if (card.getCost() <= player.getCoins()) {
-//                drawCardFromTable(deck, card, getCurrentPlayer());
-//                player.addCoins(-card.getCost());
-//                player.addBuys(-1);
-//                if (!isAction) {
-//                    this.phase = "Buy";
-//                }
-//            }
-//        }
-//    }
-//
-//    public void buyCard(String deckList, int cardNumber) {
-//        buyCard(deckList, cardNumber, false);
-//    }
-//
-//    public void checkPhaseChange() {
-//        Player player = getCurrentPlayer();
-//        if ((player.getActions() == 0 || !player.getDeck("hand").hasKingdomCards()) && !player.getDeck("hand").hasCardOfType("Treasure")) {
-//            this.phase = "Buy";
-//        }
-//    }
-
-//    public void endTurn() {
-//        if (checkGameEnd()) {
-//            endGame();
-//        } else {
-//            getCurrentPlayer().endPlayerTurn();
-//            drawCardsFromPlayerDeck(getCurrentPlayer(), 5);
-//
-//            if ((currentPlayer + 1) < this.getNumberOfPlayers()) {
-//                currentPlayer += 1;
-//            } else {
-//                currentPlayer = 0;
-//            }
-//
-//            this.phase = "Action";
-//            /*if (!players[currentPlayer].getDeck("Hand").hasKingdomCards() || players[currentPlayer].getActions() == 0) {    // this code looks unnecessary
-//				this.phase = "Buy";
-//			}*/
-//        }
-//    }
-
-//    public void endGame() {
-//        this.phase = "end";
-//        for (Player p : players) {
-//            p.endPlayerTurn();
-//            p.getDeck("discard").moveDeckTo(p.getDeck("deck"));
-//            p.setScore(p.getDeck("deck").countVictoryPoints());
-//        }
-//    }
 }
