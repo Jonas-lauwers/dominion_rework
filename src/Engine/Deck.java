@@ -277,12 +277,15 @@ public class Deck implements Serializable, Iterable<Card> {
     @Override
     public String toString() {
         if (deck.isEmpty()) {
-            return "\n";
+            return "";
         } else {
             String deckContent = "";
             int i = 1;
             for (Card c : deck) {
-                deckContent += String.format("\t%02d) %s", i, c.toString());
+                deckContent += String.format("%02d) %s", i, c.toString());
+                if(i < deck.size()) {
+                    deckContent += "\n";
+                }
                 i++;
             }
             return deckContent;
