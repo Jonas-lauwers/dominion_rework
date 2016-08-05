@@ -5,8 +5,9 @@ import java.util.*;
 import java.io.Serializable;
 
 /**
- * A Container class for players in dominion. Holds all the necessary information
- * for a player.
+ * A Container class for players in dominion. Holds all the necessary
+ * information for a player.
+ *
  * @author Jonas Lauwers <jonas.lauwers AT gmail.org>
  */
 public class Player implements Serializable {
@@ -21,6 +22,7 @@ public class Player implements Serializable {
 
     /**
      * Initialise a player object.
+     *
      * @param name The name of the player.
      */
     public Player(String name) {
@@ -39,15 +41,17 @@ public class Player implements Serializable {
 
     /**
      * Get the deck of the specified deckName.
+     *
      * @param deckName The name of the deck.
      * @return The deck object or null if the deckName does not exist.
      */
     public Deck getDeck(String deckName) {
         return this.playingField.get(deckName);
     }
-    
+
     /**
      * Get the value of the players coins.
+     *
      * @return Value of coins.
      */
     public int getCoins() {
@@ -56,6 +60,7 @@ public class Player implements Serializable {
 
     /**
      * Add the value coins to the coins of the player.
+     *
      * @param coins The value of coins to add.
      */
     public void addCoins(int coins) {
@@ -64,6 +69,7 @@ public class Player implements Serializable {
 
     /**
      * Get the value of the players actions.
+     *
      * @return Value of actions.
      */
     public int getActions() {
@@ -72,14 +78,16 @@ public class Player implements Serializable {
 
     /**
      * Add the value actions to the actions of the player.
+     *
      * @param actions The value of actions to add.
      */
     public void addActions(int actions) {
         this.actions += actions;
     }
-    
+
     /**
      * Get the value of the players buys.
+     *
      * @return Value of buys.
      */
     public int getBuys() {
@@ -88,6 +96,7 @@ public class Player implements Serializable {
 
     /**
      * Add the value buys to the buys of the player.
+     *
      * @param buys The value of buys to add.
      */
     public void addBuys(int buys) {
@@ -96,6 +105,7 @@ public class Player implements Serializable {
 
     /**
      * Get the value of the players name.
+     *
      * @return Value of the name.
      */
     public String getName() {
@@ -104,6 +114,7 @@ public class Player implements Serializable {
 
     /**
      * Get the value of the players score.
+     *
      * @return Value of score.
      */
     public int getScore() {
@@ -112,6 +123,7 @@ public class Player implements Serializable {
 
     /**
      * Set the value score of the score of the player.
+     *
      * @param score The value of score.
      */
     public void setScore(int score) {
@@ -130,7 +142,6 @@ public class Player implements Serializable {
         this.coins = 0;
     }
 
-    
     @Override
     public boolean equals(Object o) {
         if (o instanceof Player) {
