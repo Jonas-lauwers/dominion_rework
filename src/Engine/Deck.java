@@ -47,7 +47,7 @@ public class Deck implements Serializable, Iterable<Card> {
             deck.add(0, card);
         }
         else if(index >= deck.size()) {
-            this.add(card);
+            deck.add(card);
         }
         else {
             deck.add(index, card);
@@ -61,7 +61,7 @@ public class Deck implements Serializable, Iterable<Card> {
      * @return The card at the index or null if index doesn't exist.
      */
     public Card getCard(int cardNumber) {
-        if (0 < cardNumber && cardNumber < deck.size()) {
+        if (0 <= cardNumber && cardNumber < deck.size()) {
             return deck.get(cardNumber);
         }
         return null;
@@ -86,7 +86,7 @@ public class Deck implements Serializable, Iterable<Card> {
      */
     //TODO: check if this version of this is still needed.
     public boolean remove(int cardNumber) {
-        if(0 < cardNumber && cardNumber < deck.size()) {
+        if(0 <= cardNumber && cardNumber < deck.size()) {
             deck.remove(cardNumber);
             return true;
         }
@@ -154,7 +154,7 @@ public class Deck implements Serializable, Iterable<Card> {
      */
     //TODO: Check if this version is needed.
     public boolean moveCardToDeck(int cardNumber, Deck deck) {
-        if (0 < cardNumber && cardNumber < this.deck.size()) {
+        if (0 <= cardNumber && cardNumber < this.deck.size()) {
             deck.add(this.getCard(cardNumber));
             this.remove(cardNumber);
             return true;
