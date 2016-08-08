@@ -1,7 +1,6 @@
 package Engine;
 
 import java.util.*;
-import Card.Card;
 import Database_connection.*;
 
 import java.io.Serializable;
@@ -18,6 +17,8 @@ public class GameEngine implements Serializable {
     private int currentPlayer;
     private String[] expansions;
     private String phase;
+    private int cardActionsToPlay;
+    private int cardActionsPlayed;
 
     public GameEngine() {
         this.players = new ArrayList<>();
@@ -25,6 +26,8 @@ public class GameEngine implements Serializable {
         this.choosableKingdomCards = new Deck();
         this.phase = "init";
         this.currentPlayer = 0;
+        this.cardActionsToPlay = 0;
+        this.cardActionsPlayed = 0;
     }
 
     public int getMaxNumberOfPlayers() {
@@ -170,29 +173,32 @@ public class GameEngine implements Serializable {
     //Card Actions:
     /**
      * Play a given card and execute all the actions of the card.
+     * Does not actions if card is not playable
      *
      * @param card The card to play.
-     * @return True if card is played.
+     * @return False if card requires user interaction.
+     * Otherwise always returns true even if card is not playable.
      */
     public boolean playCard(Card card) {
-        Player player = getCurrentPlayer();
         if (card.isPlayable()) {
-            boolean played = false;
-            if ((player.getActions() > 0) && card.isKingdom()) {
-                playAction(card);
-                played = true;
-            }
+            Player player = getCurrentPlayer();
             if (card.isTreasure()) {
-                player.addCoins(card.getCoins());
-                played = true;
-            }
-            if (played) {
                 moveCardFromHandToDeck(card, "table");
-                checkPhaseChange();
-                return true;
+                player.addCoins(card.getAddCoins());
+            }
+            if ((player.getActions() > 0) && card.isKingdom()) {
+                moveCardFromHandToDeck(card, "table");
+                player.addActions(card.getAddActions() - 1);
+                player.addBuys(card.getAddBuys());
+                player.addCoins(card.getAddCoins());
+                drawCardsFromPlayerDeck(player, card.getDraws());
+                this.cardActionsToPlay = card.getNumberOfActions();
+                if(cardActionsToPlay > 0) {
+                    playActions(card);
+                }
             }
         }
-        return false;
+        return true;
     }
 
     /**
@@ -200,14 +206,15 @@ public class GameEngine implements Serializable {
      *
      * @param card The action card to play.
      */
-    private void playAction(Card card) {
-        Player player = getCurrentPlayer();
-        player.addActions(card.getActions() - 1);
-        player.addBuys(card.getBuys());
-        player.addCoins(card.getCoins());
-        drawCardsFromPlayerDeck(player, card.getDraws());
+    private void playActions(Card card) {
+        
     }
     
+    /*
+    - tell engine to set request to throw away a card and make engine repeat that x times the player has cards in his hand.
+    - put all the chosen cards in a temp deck and remove from hand so player can see update hand to choose next.
+    - if it happend x times or player wanted to stop in between, trash all the cards from the temp deck and add x times cards as the player trashed.
+    */
     /** Implement this cellar card function
         int discardCards = 0;
         userInput = getUserInput("Enter a cardnumber you want to discard or 0 to continue: ", 0, player.getDeck("hand").size());

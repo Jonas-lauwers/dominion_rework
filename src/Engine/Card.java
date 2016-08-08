@@ -1,4 +1,4 @@
-package Card;
+package Engine;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -41,6 +41,7 @@ public class Card implements Serializable, Comparable<Object> {
 	this.coins = Integer.parseInt(dbOutput[5]); 
         this.victoryPoints=Integer.parseInt(dbOutput[6]);
         this.description = ( dbOutput[7] == null ? "" : dbOutput[7]);
+        giveActionList();
     }
 
     /**
@@ -256,5 +257,13 @@ public class Card implements Serializable, Comparable<Object> {
         int hash = 7;
         hash = 29 * hash + Objects.hashCode(this.name);
         return hash;
+    }
+    
+    /**
+     * Gives the card it's own specific action list.
+     */
+    //TODO : is hardCoded but this should be able to pushed to the database( or cardfile).
+    private void giveActionList() {
+        
     }
 }

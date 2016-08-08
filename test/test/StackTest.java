@@ -5,7 +5,7 @@
  */
 package test;
 
-import Card.Card;
+import Engine.Card;
 import Engine.Stack;
 import org.junit.*;
 import static org.junit.Assert.*;

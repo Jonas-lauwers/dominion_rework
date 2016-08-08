@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.io.Serializable;
-import Card.Card;
 
 /**
  * An object representing stack to hold cards. It cant hold equal Card objects.

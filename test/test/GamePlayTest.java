@@ -5,7 +5,7 @@
  */
 package test;
 
-import Card.Card;
+import Engine.Card;
 import Engine.Deck;
 import Engine.GameEngine;
 import Engine.Player;
@@ -40,7 +40,7 @@ public class GamePlayTest {
         int coins = 0;
         for (Card c : deck) {
             if (c.isTreasure()) {
-                coins = c.getCoins();
+                coins = c.getAddCoins();
                 ge.playCard(c);
                 break;
             }
@@ -56,7 +56,7 @@ public class GamePlayTest {
         for (int i = 0; i < deck.size(); i++) {
             Card c = deck.getCard(i);
             if (c.isTreasure()) {
-                coins += c.getCoins();
+                coins += c.getAddCoins();
                 ge.playCard(c);
                 i--;
             }

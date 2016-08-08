@@ -7,7 +7,7 @@ import java.util.List;
 import org.junit.Test;
 import Engine.GameEngine;
 import Engine.Player;
-import Card.Card;
+import Engine.Card;
 import Database_connection.SaveGameConnection;
 import Engine.Stack;
 
