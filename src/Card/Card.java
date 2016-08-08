@@ -17,9 +17,12 @@ public class Card implements Serializable, Comparable<Object> {
     private final String description;
     private final String type;
     private final int cost;
-    final String[] dbOutput;
-    
-    CardState cardState;
+    private int coins;
+    private int draws;
+    private int actions;
+    private int buys;
+    private int victoryPoints;
+    private String[][] actionList;
 
     /**
      * Creates a new card based on the name. 
@@ -28,41 +31,16 @@ public class Card implements Serializable, Comparable<Object> {
      * @param name The name of the card
      */
     public Card(String name) {
-        dbOutput = new cardConnection().getCard(name);
+        String [] dbOutput = new cardConnection().getCard(name);
         this.name = name.toLowerCase();
-        this.cost = Integer.parseInt(dbOutput[1]);
-        this.description = ( dbOutput[7] == null ? "" : dbOutput[7]);
         this.type = dbOutput[0];
-        giveState();
-        cardState.completeCard();
-
-    }
-
-    /**
-     * Gives the card a state depending on it's type.
-     */
-    private void giveState() {
-        switch (type) {
-            case "Attack":
-                cardState = new AttackState(this);
-                break;
-            case "Reaction":
-                cardState = new ReactionState(this);
-                break;
-            case "Action":
-                cardState = new ActionState(this);
-                break;
-            case "Treasure":
-                cardState = new TreasureState(this);
-                break;
-            case "Victory":
-                cardState = new VictoryState(this);
-                break;
-            case "Curse":
-                cardState = new CurseState(this);
-                break;
-        }
-
+        this.cost = Integer.parseInt(dbOutput[1]);
+        this.actions = Integer.parseInt(dbOutput[2]); 
+        this.buys = Integer.parseInt(dbOutput[3]); 
+        this.draws = Integer.parseInt(dbOutput[4]); 
+	this.coins = Integer.parseInt(dbOutput[5]); 
+        this.victoryPoints=Integer.parseInt(dbOutput[6]);
+        this.description = ( dbOutput[7] == null ? "" : dbOutput[7]);
     }
 
     /**
@@ -102,30 +80,30 @@ public class Card implements Serializable, Comparable<Object> {
     }
 
     /**
-     * Return the coins value of the card.
+     * Return the number of coins to be added by the card.
      *
      * @return The coins value of the card.
      */
-    public int getCoins() {
-        return cardState.getCoins();
+    public int getAddCoins() {
+        return this.coins;
     }
 
     /**
-     * Return the buys value of the card.
+     * Return the number of buys to be added by the card.
      * 
      * @return The buys value of the card.
      */
-    public int getBuys() {
-        return cardState.getBuys();
+    public int getAddBuys() {
+        return this.buys;
     }
 
     /**
-     * Return the actions value of the card.
+     * Return the number of actions to be added the card.
      * 
      * @return The actions value of the card.
      */
-    public int getActions() {
-        return cardState.getActions();
+    public int getAddActions() {
+        return this.actions;
     }
 
     /**
@@ -134,7 +112,7 @@ public class Card implements Serializable, Comparable<Object> {
      * @return The draws value of the card.
      */
     public int getDraws() {
-        return cardState.getDraws();
+        return this.draws;
     }
 
     /**
@@ -143,7 +121,7 @@ public class Card implements Serializable, Comparable<Object> {
      * @return The victory value of the card.
      */
     public int getVictoryPoints() {
-        return cardState.getVictoryPoints();
+        return this.victoryPoints;
     }
 
     /**
@@ -153,7 +131,10 @@ public class Card implements Serializable, Comparable<Object> {
      */
     //TODO change the cardstate function to a more logic result
     public boolean isPlayable() {
-        return !(cardState.getPlayableTurn().equals("never"));
+        if(this.isKingdom() || this.isTreasure()) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -203,11 +184,39 @@ public class Card implements Serializable, Comparable<Object> {
         }
         return false;
     }
+    
+    /**
+     * Returns whether the card is curse card or not.
+     * 
+     * @return True if reaction card.
+     */
+    public boolean isCurse() {
+        if (this.type.equals("Curse")) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+    * Returns the number of actions it has to perform. Returns 0 if there are none.
+    * @return Number of actions to perform.
+    */
+    public int getNumberOfActions() {
+        return this.actionList.length;
+    }
+    
+    /**
+    * Returns the array with all the methods and parameters to perform
+    * @return String array containing method names and parameters or null if the card has no actions to perform.
+    */
+    public String[][] getActions() {
+        return this.actionList;
+    }
 
     @Override
     public String toString() {
         if (this.isKingdom() ) {
-            return String.format("%-20s Cost: %1d - Actions: %1d - Buys: %1d - Coins: %1d - Cards: %1d - Description: %s", this.getName(), this.getCost(), this.getActions(), this.getBuys(), this.getCoins(), this.getDraws(), this.getDescription());
+            return String.format("%-20s Cost: %1d - Actions: %1d - Buys: %1d - Coins: %1d - Cards: %1d - Description: %s", this.getName(), this.getCost(), this.getAddActions(), this.getAddBuys(), this.getAddCoins(), this.getDraws(), this.getDescription());
         }
         return String.format("%-10s Cost: %1d", this.getName(), this.getCost());
     }
