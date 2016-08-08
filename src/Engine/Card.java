@@ -22,7 +22,7 @@ public class Card implements Serializable, Comparable<Object> {
     private int actions;
     private int buys;
     private int victoryPoints;
-    private String[][] actionList;
+    private Object[][] actionList;
 
     /**
      * Creates a new card based on the name. 
@@ -210,8 +210,11 @@ public class Card implements Serializable, Comparable<Object> {
     * Returns the array with all the methods and parameters to perform
     * @return String array containing method names and parameters or null if the card has no actions to perform.
     */
-    public String[][] getActions() {
-        return this.actionList;
+    public Object[] getActions(int index) {
+        if(actionList != null) {
+            return this.actionList[index];
+        }
+        return null;
     }
 
     @Override
@@ -263,7 +266,13 @@ public class Card implements Serializable, Comparable<Object> {
      * Gives the card it's own specific action list.
      */
     //TODO : is hardCoded but this should be able to pushed to the database( or cardfile).
+    //string array : { method, param1, param2, param3, paramN, ...}
     private void giveActionList() {
-        
+        switch(this.getName()) {
+            case "cellar":
+                Object[] action1 = {"setRequest", "TestTesTest"};
+                actionList = new Object[1][];
+                actionList[0] = action1;
+        }
     }
 }
