@@ -3,7 +3,7 @@ package test;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import Engine.Deck;
-import Card.Card;
+import Engine.Card;
 
 public class DeckTest {
 	Deck deck = new Deck();

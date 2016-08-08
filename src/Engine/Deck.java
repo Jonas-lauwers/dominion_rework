@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.io.Serializable;
-import Card.Card;
 
 
 /**
@@ -282,13 +281,13 @@ public class Deck implements Serializable, Iterable<Card> {
             return "";
         } else {
             String deckContent = "";
-            int i = 1;
+            int counter = 1;
             for (Card c : deck) {
-                deckContent += String.format("%02d) %s", i, c.toString());
-                if(i < deck.size()) {
+                deckContent += String.format("%02d) %s", counter, c.toString());
+                if(counter < deck.size()) {
                     deckContent += "\n";
                 }
-                i++;
+                counter++;
             }
             return deckContent;
         }

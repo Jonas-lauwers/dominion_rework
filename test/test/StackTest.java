@@ -5,7 +5,7 @@
  */
 package test;
 
-import Card.Card;
+import Engine.Card;
 import Engine.Stack;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -85,7 +85,7 @@ public class StackTest {
         stack.add(cards[0],0);
         stack.add(cards[1],0);
         stack.add(cards[3],0);
-        assertEquals("\t01) (00) "+cards[1]+"\t02) (00) "+cards[0]+"\t03) (00) "+cards[3], stack.toString());
+        assertEquals("\t01) (00) "+cards[1]+"\n\t02) (00) "+cards[0]+"\n\t03) (00) "+cards[3], stack.toString());
     }
     
 }

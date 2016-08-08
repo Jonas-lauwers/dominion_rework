@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.io.Serializable;
-import Card.Card;
 
 /**
  * An object representing stack to hold cards. It cant hold equal Card objects.
@@ -110,7 +109,10 @@ public class Stack implements Serializable, Iterable<Card> {
         int counter = 1;
         for(Card c: sorted) {
             stackString += String.format("\t%02d) (%02d) %s", counter, this.getNumberOfCards(c), c.toString());
-            counter++;
+            if(counter < stack.size()) {
+                    stackString += "\n";
+                }
+                counter++;
         }
         return stackString;
     }
