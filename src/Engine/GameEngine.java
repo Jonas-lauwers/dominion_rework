@@ -477,13 +477,4 @@ public class GameEngine implements Serializable {
         tableStatus += String.format("KingdomCards:\n%s", getStack("kingdom"));
         return tableStatus;
     }
-
-    // Test function , maybe move to test file?
-    public void setProvinceCountToNull() {
-        Card card = new Card("province");
-        Stack stack = gameTable.get("victory");
-        if (stack.getNumberOfCards(card) > 0) {
-            stack.add(card, -stack.getNumberOfCards(card));
-        }
-    }
 }

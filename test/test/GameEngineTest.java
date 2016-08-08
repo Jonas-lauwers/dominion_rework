@@ -9,6 +9,7 @@ import Engine.GameEngine;
 import Engine.Player;
 import Card.Card;
 import Database_connection.SaveGameConnection;
+import Engine.Stack;
 
 public class GameEngineTest {
 
@@ -115,7 +116,11 @@ public class GameEngineTest {
         ge.getChoosableKingdomCards();
         ge.setPlayableKingdomCards(new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
         ge.startGame();
-        ge.setProvinceCountToNull();
+        Card card = new Card("province");
+        Stack stack = ge.getStack("victory");
+        if (stack.getNumberOfCards(card) > 0) {
+            stack.add(card, -stack.getNumberOfCards(card));
+        }
         ge.endTurn();
         List<Player> players = ge.getPlayers();
         assertEquals(3, players.get(0).getScore());
@@ -141,7 +146,11 @@ public class GameEngineTest {
         player.getDeck("discard").add(new Card("estate"));
         player.getDeck("hand").add(new Card("province"));
         player.getDeck("deck").add(new Card("gardens"));
-        ge.setProvinceCountToNull();
+        Card card = new Card("province");
+        Stack stack = ge.getStack("victory");
+        if (stack.getNumberOfCards(card) > 0) {
+            stack.add(card, -stack.getNumberOfCards(card));
+        }
         ge.endTurn();
         List<Player> players = ge.getPlayers();
         assertEquals(31, players.get(0).getScore());
