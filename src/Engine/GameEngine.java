@@ -187,7 +187,7 @@ public class GameEngine implements Serializable {
                 played = true;
             }
             if (played) {
-                moveCardFromHandToDiscard(card);
+                moveCardFromHandToDeck(card, "table");
                 checkPhaseChange();
                 return true;
             }
@@ -231,7 +231,7 @@ public class GameEngine implements Serializable {
         Player player = getCurrentPlayer();
         if (player.getBuys() != 0 && (card.getCost() <= player.getCoins())) {
             Stack stack = getStack(stackName);
-            if (drawCardFromTable(stack, card, player)) {
+            if (drawCardFromTable(stack, card, player, "discard")) {
                 player.addCoins(-card.getCost());
                 player.addBuys(-1);
                 this.phase = "buy";
@@ -275,9 +275,9 @@ public class GameEngine implements Serializable {
      *
      * @param card The card to discard.
      */
-    private boolean moveCardFromHandToDiscard(Card card) {
+    private boolean moveCardFromHandToDeck(Card card, String deckName) {
         Player player = getCurrentPlayer();
-        return player.getDeck("hand").moveCardToDeck(card, player.getDeck("table"));
+        return player.getDeck("hand").moveCardToDeck(card, player.getDeck(deckName));
     }
 
     /**
@@ -290,30 +290,12 @@ public class GameEngine implements Serializable {
      * @param toDeck Deck in which to put the card.
      * @return True if card is in stack.
      */
-    private boolean drawCardFromTable(Stack stack, Card card, Player player, String toDeck) {
+    public boolean drawCardFromTable(Stack stack, Card card, Player player, String toDeck) {
         if (stack.remove(card)) {
             player.getDeck(toDeck).add(card);
             return true;
         }
         return false;
-    }
-
-    /**
-     * Draw a card from the stack on the game table and put in in the players
-     * discard deck.
-     *
-     * @param stack Stack to draw from.
-     * @param card Card to draw.
-     * @param player Player who draws the card
-     * @return True if card is in stack.
-     */
-    private boolean drawCardFromTable(Stack stack, Card card, Player player) {
-        return drawCardFromTable(stack, card, player, "discard");
-    }
-
-    //TODO: remove this it's only temporary
-    public boolean drawCardFromTable(String stack, Card card, Player player, String toDeck) {
-        return drawCardFromTable(getStack(stack), card, player, toDeck);
     }
 
     //Engine actions:
@@ -449,7 +431,7 @@ public class GameEngine implements Serializable {
     public void getCardOfValue(String stackName, Card card, int maxValue) {
         Stack stack = getStack(stackName);
         if (card.getCost() <= maxValue) {
-            drawCardFromTable(stack, card, getCurrentPlayer());
+            drawCardFromTable(stack, card, getCurrentPlayer(), "discard");
         }
     }
 
