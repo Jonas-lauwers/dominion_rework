@@ -110,7 +110,10 @@ public class Stack implements Serializable, Iterable<Card> {
         int counter = 1;
         for(Card c: sorted) {
             stackString += String.format("\t%02d) (%02d) %s", counter, this.getNumberOfCards(c), c.toString());
-            counter++;
+            if(counter < stack.size()) {
+                    stackString += "\n";
+                }
+                counter++;
         }
         return stackString;
     }

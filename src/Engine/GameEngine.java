@@ -207,6 +207,18 @@ public class GameEngine implements Serializable {
         player.addCoins(card.getCoins());
         drawCardsFromPlayerDeck(player, card.getDraws());
     }
+    
+    /** Implement this cellar card function
+        int discardCards = 0;
+        userInput = getUserInput("Enter a cardnumber you want to discard or 0 to continue: ", 0, player.getDeck("hand").size());
+        while (userInput != 0) {
+            discardCards++;
+            gameEngine.discardFromHand(player, userInput - 1);
+            showPlayerStatus(player);
+            userInput = getUserInput("Enter a cardnumber you want to discard or 0 to continue: ", 0, player.getDeck("hand").size());
+        }
+        gameEngine.drawCardsFromPlayerDeck(player, discardCards);
+    **/
 
     /**
      * Buy a card from a stack on the game table.
@@ -452,16 +464,16 @@ public class GameEngine implements Serializable {
         playerStatus += String.format("Coins:  %2d\t", p.getCoins());
         playerStatus += String.format("Buys: %2d\t", p.getBuys());
         playerStatus += String.format("Actions: %2d\n", p.getActions());
-        playerStatus += String.format("Cards on table:\n%s", p.getDeck("table").toString());
+        playerStatus += String.format("Cards on table:\n%s\n", p.getDeck("table").toString());
         playerStatus += String.format("Cards in hand:\n%s", p.getDeck("hand").toString());
         return playerStatus;
     }
 
     public String getTableStatus() {
         String tableStatus = String.format("Overview of table:\n");
-        tableStatus += String.format("Treasure Cards:\n%s", getStack("treasure"));
-        tableStatus += String.format("Victory Cards:\n%s", getStack("victory"));
-        tableStatus += String.format("Curse Cards:\n%s", getStack("curse"));
+        tableStatus += String.format("Treasure Cards:\n%s\n", getStack("treasure"));
+        tableStatus += String.format("Victory Cards:\n%s\n", getStack("victory"));
+        tableStatus += String.format("Curse Cards:\n%s\n", getStack("curse"));
         tableStatus += String.format("KingdomCards:\n%s", getStack("kingdom"));
         return tableStatus;
     }
