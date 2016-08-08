@@ -4,6 +4,8 @@ import java.util.*;
 import Database_connection.*;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.Objects;
 
 public class GameEngine implements Serializable {
 
@@ -194,7 +196,7 @@ public class GameEngine implements Serializable {
                 drawCardsFromPlayerDeck(player, card.getDraws());
                 this.cardActionsToPlay = card.getNumberOfActions();
                 if(cardActionsToPlay > 0) {
-                    playActions(card);
+                    return playActions(card);
                 }
             }
         }
@@ -202,12 +204,34 @@ public class GameEngine implements Serializable {
     }
 
     /**
-     * Play the card as an action card.
-     *
-     * @param card The action card to play.
+     * Play the actions of a card.
+     * 
+     * @param boolean True if all actions of the card are played.
      */
-    private void playActions(Card card) {
+    private boolean playActions(Card card) {
+        Object[] action = card.getActions(cardActionsPlayed);
+        String method = (String) action[0];
+        Class[] paramClass = null;
+        Object[] params = null;
         
+        
+        if(action.length > 1) {
+            paramClass = new Class[action.length - 1];
+            params = new Object[paramClass.length];
+            for(int i = 1; i < action.length; i++) {
+                paramClass[i - 1] = action[i].getClass();
+                params[i-1] = action[i];
+            }
+        }
+        try {
+            Method m = getClass().getDeclaredMethod(method, paramClass);
+            m.invoke(this,params);
+            return true;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
     
     /*
@@ -406,6 +430,10 @@ public class GameEngine implements Serializable {
             p.getDeck("discard").moveDeckTo(p.getDeck("deck"));
             p.setScore(p.getDeck("deck").countVictoryPoints());
         }
+    }
+    
+    public void setRequest(String message) {
+        System.err.println(message);
     }
 
     //TODO: update these to be compliant to reworked functions.

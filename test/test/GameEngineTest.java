@@ -291,4 +291,34 @@ public class GameEngineTest {
             fail();
         }
     }
+    
+//    @Test
+//    public void actionListWithOneActionNoParamsTest() {
+//        ge = new GameEngine();
+//        ge.addPlayer("jonas");
+//        ge.addPlayer("emiel");
+//        ge.setExpansions("Dominion");
+//        ge.getChoosableKingdomCards();
+//        ge.setPlayableKingdomCards(new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 18});
+//        ge.startGame();
+//        Card trashcard = new Card("cellar");
+//        ge.getCurrentPlayer().getDeck("hand").add(trashcard);
+//        ge.playCard(trashcard);
+//        assertEquals(trashcard, ge.getCurrentPlayer().getDeck("trash").getCard(0));
+//    }
+    
+    @Test
+    public void actionListWithOneActionOneParamsTest() {
+        ge = new GameEngine();
+        ge.addPlayer("jonas");
+        ge.addPlayer("emiel");
+        ge.setExpansions("Dominion");
+        ge.getChoosableKingdomCards();
+        ge.setPlayableKingdomCards(new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 18});
+        ge.startGame();
+        Card trashcard = new Card("cellar");
+        ge.getCurrentPlayer().getDeck("hand").add(trashcard);
+        ge.playCard(trashcard);
+        //assertEquals(trashcard, ge.getCurrentPlayer().getDeck("trash").getCard(0));
+    }
 }
