@@ -1,11 +1,10 @@
 package Engine;
 
+import Card.*;
 import java.util.*;
 import Database_connection.*;
 
 import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.Objects;
 
 public class GameEngine implements Serializable {
 
@@ -21,6 +20,8 @@ public class GameEngine implements Serializable {
     private String phase;
     private int cardActionsToPlay;
     private int cardActionsPlayed;
+    private boolean requestsFullfilled;
+    private Request req;
 
     public GameEngine() {
         this.players = new ArrayList<>();
@@ -30,6 +31,8 @@ public class GameEngine implements Serializable {
         this.currentPlayer = 0;
         this.cardActionsToPlay = 0;
         this.cardActionsPlayed = 0;
+        this.requestsFullfilled = true;
+        this.req = new Request(this, players);
     }
 
     public int getMaxNumberOfPlayers() {
@@ -132,6 +135,8 @@ public class GameEngine implements Serializable {
                 break;
         }
 
+        // can be automated by the cardconnection te get just treasure and victory from dominion, only add specials ones if wanted
+        //do watch out for garden tough, it's not a basic one ... so ignore all kingdom cards
         String[] moneyTypes = new String[]{"copper", "silver", "gold"};
         Stack moneyStack = new Stack();
         for (int i = 0; i < moneyTypes.length; i++) {
@@ -194,45 +199,43 @@ public class GameEngine implements Serializable {
                 player.addBuys(card.getAddBuys());
                 player.addCoins(card.getAddCoins());
                 drawCardsFromPlayerDeck(player, card.getDraws());
-                this.cardActionsToPlay = card.getNumberOfActions();
-                if(cardActionsToPlay > 0) {
-                    return playActions(card);
-                }
+//                this.cardActionsToPlay = card.getNumberOfActions();
+//                if(cardActionsToPlay > 0) {
+//                    playAction(card);
+//                    return requestsFullfilled;
+//                }
             }
         }
         return true;
     }
 
-    /**
-     * Play the actions of a card.
-     * 
-     * @param boolean True if all actions of the card are played.
-     */
-    private boolean playActions(Card card) {
-        Object[] action = card.getActions(cardActionsPlayed);
-        String method = (String) action[0];
-        Class[] paramClass = null;
-        Object[] params = null;
-        
-        
-        if(action.length > 1) {
-            paramClass = new Class[action.length - 1];
-            params = new Object[paramClass.length];
-            for(int i = 1; i < action.length; i++) {
-                paramClass[i - 1] = action[i].getClass();
-                params[i-1] = action[i];
-            }
-        }
-        try {
-            Method m = getClass().getDeclaredMethod(method, paramClass);
-            m.invoke(this,params);
-            return true;
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
+//    /**
+//     * Play the actions of a card.
+//     * 
+//     * @param boolean True if all actions of the card are played.
+//     */
+//    private void playAction(Card card) {
+//        Object[] action = card.getActions(cardActionsPlayed);
+//        String method = (String) action[0];
+//        Class[] paramClass = null;
+//        Object[] params = null;
+//        
+//        if(action.length > 1) {
+//            paramClass = new Class[action.length - 1];
+//            params = new Object[paramClass.length];
+//            for(int i = 1; i < action.length; i++) {
+//                paramClass[i - 1] = action[i].getClass();
+//                params[i-1] = action[i];
+//            }
+//        }
+//        try {
+//            Method m = getClass().getDeclaredMethod(method, paramClass);
+//            m.invoke(this,params);
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
     
     /*
     - tell engine to set request to throw away a card and make engine repeat that x times the player has cards in his hand.
@@ -432,8 +435,9 @@ public class GameEngine implements Serializable {
         }
     }
     
-    public void setRequest(String message) {
-        System.err.println(message);
+    public void setRequest(String message, String players, int repeat) {
+        req.setRequest(message, players, repeat);
+        requestsFullfilled = false;
     }
 
     //TODO: update these to be compliant to reworked functions.

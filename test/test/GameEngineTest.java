@@ -7,7 +7,7 @@ import java.util.List;
 import org.junit.Test;
 import Engine.GameEngine;
 import Engine.Player;
-import Engine.Card;
+import Card.Card;
 import Database_connection.SaveGameConnection;
 import Engine.Stack;
 
@@ -306,19 +306,32 @@ public class GameEngineTest {
 //        ge.playCard(trashcard);
 //        assertEquals(trashcard, ge.getCurrentPlayer().getDeck("trash").getCard(0));
 //    }
+//    
+//    @Test
+//    public void actionListWithOneActionOneParamsTest() {
+//        ge = new GameEngine();
+//        ge.addPlayer("jonas");
+//        ge.addPlayer("emiel");
+//        ge.setExpansions("Dominion");
+//        ge.getChoosableKingdomCards();
+//        ge.setPlayableKingdomCards(new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 18});
+//        ge.startGame();
+//        Card trashcard = new Card("cellar");
+//        ge.getCurrentPlayer().getDeck("hand").add(trashcard);
+//        assertTrue(ge.playCard(trashcard));
+//    }
     
-    @Test
-    public void actionListWithOneActionOneParamsTest() {
-        ge = new GameEngine();
-        ge.addPlayer("jonas");
-        ge.addPlayer("emiel");
-        ge.setExpansions("Dominion");
-        ge.getChoosableKingdomCards();
-        ge.setPlayableKingdomCards(new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 18});
-        ge.startGame();
-        Card trashcard = new Card("cellar");
-        ge.getCurrentPlayer().getDeck("hand").add(trashcard);
-        ge.playCard(trashcard);
-        //assertEquals(trashcard, ge.getCurrentPlayer().getDeck("trash").getCard(0));
-    }
+//    @Test
+//    public void setRequestTest() {
+//        ge = new GameEngine();
+//        ge.addPlayer("jonas");
+//        ge.addPlayer("emiel");
+//        ge.setExpansions("Dominion");
+//        ge.getChoosableKingdomCards();
+//        ge.setPlayableKingdomCards(new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 18});
+//        ge.startGame();
+//        Card trashcard = new Card("cellar");
+//        ge.getCurrentPlayer().getDeck("hand").add(trashcard);
+//        ge.playCard(trashcard);
+//    }
 }

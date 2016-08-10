@@ -5,7 +5,7 @@
  */
 package test;
 
-import Engine.Card;
+import Card.Card;
 import Engine.Deck;
 import Engine.GameEngine;
 import Engine.Player;
